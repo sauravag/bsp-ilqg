@@ -16,14 +16,11 @@ classdef TwoDPointRobot < MotionModelBase
         zeroNoise = [0;0];
     end
     
-    properties
-        dt = 0.1; % delta_t for time discretization
-    end
-    
     methods
         
-        function obj = TwoDPointRobot()
-            obj@MotionModelBase();                       
+        function obj = TwoDPointRobot(dt)
+            obj@MotionModelBase();      
+            obj.dt = dt;
         end
         
         function x_next = evolve(obj,x,u,w) % discrete motion model equation            
