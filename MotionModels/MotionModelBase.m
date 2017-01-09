@@ -1,8 +1,14 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Belief Space Planning with iLQG
+% Copyright 2017
+% Author: Saurav Agarwal
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 classdef MotionModelBase < handle
     properties (Abstract, Constant) % note that all properties must be constant, because we have a lot of copies of this object and it can take a lot of memory otherwise.
         stDim; % state dimension
         ctDim;  % control vector dimension
-        wDim;   % Process noise (W) dimension      
+        wDim;   % Process noise (W) dimension
+        P_Wg; % covariance of state-additive-noise
         sigma_b_u; % A constant bias intensity (covariance) of the control noise
         eta_u; % A coefficient, which makes the control noise intensity proportional to the control signal       
         zeroNoise;
@@ -10,7 +16,6 @@ classdef MotionModelBase < handle
     
     properties
         dt = 0.0; % delta_t for time discretization
-        P_Wg; % covariance of state-additive-noise, made it non-constant because we want to scale this appropriately
     end
     
     methods (Abstract)
@@ -24,7 +29,7 @@ classdef MotionModelBase < handle
         
         Q = getProcessNoiseCovariance(x,u) % compute the covariance of process noise based on the current poistion and controls
         
-        w = generateProcessNoise(x,u) % simulate (generate) process noise based on the current poistion and controls
+        w = generateProcessNoise(x,u) % simulate (generate) process noise based on the current state and controls
         
     end
 end

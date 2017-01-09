@@ -1,8 +1,8 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Belief Space Planning with iLQG
-% Copyright 2017 Texas A&M University
+% Copyright 2017
 % Author: Saurav Agarwal
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clc;
 close all;
@@ -12,10 +12,10 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 % Set full_DDP=true to compute 2nd order derivatives of the 
 % dynamics. This will make iterations more expensive, but 
 % final convergence will be much faster (quadratic)
-full_DDP = true;
+full_DDP = false;
 
 % set up the optimization problem
-DYNCST  = @(x,u,i) car_dyn_cst(x,u,full_DDP);
+DYNCST  = @(x,u,i) sys_dyn_cst(x,u,full_DDP);
 T       = 500;              % horizon
 x0      = [1;1;pi*3/2;0];   % initial state
 u0      = .1*randn(2,T);    % initial controls

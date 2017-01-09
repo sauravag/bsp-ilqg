@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Planned Localization in Unknown Maps
-% Copyright 2015
+% Belief Space Planning with iLQG
+% Copyright 2017
 % Author: Saurav Agarwal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -13,40 +13,21 @@ classdef ObservationModelBase < handle
     properties
         landmarkIDs; % All landmark IDS in the world
         landmarkPoses; % landmark locations
-        map; % the landmarks that have been mapped
     end
     
     methods (Abstract)
         
         z = getObservation(obj,x, varargin)
                 
-        H_r = getObservationJacobian(obj,x,v,varargin)
+        H = getObservationJacobian(obj, x)
         
         M = getObservationNoiseJacobian(obj,x,v,z)
         
         R = getObservationNoiseCovariance(obj,x,z)
+
+        v = computeObservationNoise(obj,z)
         
-        H_m = getObservationFeatureJacobian(obj,x,f);
-        
-        P_f = getObservationFeatureCovariance(obj,x,z);
-        
-        innov = computeInnovation(obj,Xprd,Zg,varargin);
-        
-        feats = getInverseObservation(obj, x, z);
-        
-        G = getInverseObservationJacobian(obj,x,z);
-        
-        W = getInverseObservationNoiseJacobian(obj,x,z);
+        innov = computeInnovation(obj,Xprd,Zg)
     end
     
-    methods
-        
-        function obj = updateMap(obj, map)
-            obj.map = map;
-        end
-        
-        function draw(obj,x,z)
-            warning('not implemented');
-        end
-    end
 end
