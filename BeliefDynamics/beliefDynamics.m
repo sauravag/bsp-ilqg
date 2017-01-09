@@ -1,6 +1,6 @@
 function b_next = beliefDynamics(b, u, motionModel, obsModel)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Propagate belief according to approach given in Section 4.1 
+% Propagate beliefs according to approach given in Section 4.1 
 % of Van Den Berg et al. IJRR 2012
 %
 % Input:
@@ -13,6 +13,31 @@ function b_next = beliefDynamics(b, u, motionModel, obsModel)
 %   b_next: Updated belief vector
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+T = size(b,2);
+
+b_next = zeros(size(b));
+
+for i=1:T
+    b_next(:,i) = updateSingleBelief(b(:,i), u(:,i), motionModel, obsModel);
+end
+
+
+end
+
+function b_next = updateSingleBelief(b, u, motionModel, obsModel)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Propagate single belief according to approach given in Section 4.1 
+% of Van Den Berg et al. IJRR 2012
+%
+% Input:
+%   b: Current belief vector
+%   u: Control input
+%   motionModel: Robot motion model
+%   obsModel: Observation model
+%
+% Outputs:
+%   b_next: Updated belief vector
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % get the state space dimension
 stDim = motionModel.stDim;
 
