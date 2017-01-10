@@ -15,6 +15,9 @@ dbstop if error;
 
 fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
+% Define environment
+load('Maps/mapA.mat'); % load map
+
 % Initialize parameters
 T = 60; % Total time horizon
 
@@ -22,8 +25,9 @@ dt = 0.2; % time step
 
 mm = TwoDPointRobot(dt); % motion model
 
-landmarks = [-12,-1;-5,-1]; % Landmarks
-om = TwoDRangeModel(1:size(landmarks,2),landmarks); % observation model
+om = TwoDRangeModel(1:size(map.landmarks,2),map.landmarks); % observation model
+
+cc = @(x)isStateValid(x,map); % collision checker
 
 x0 = [-10;-10]; % intial state
 Sigma0 = [1.0 0.0;0.0, 1.0]; % intial covariance
@@ -35,11 +39,6 @@ xf = [0;4]; % target state
 % straight line guess
 u0 = [repmat(([0;-10]-x0)/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt),...
        repmat((xf-[0;-10])/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt)];% nominal controls
-
-% Define environment
-load('Maps/mapA.mat'); % load map
-
-cc = @(x)isStateValid(x,map);
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
@@ -56,7 +55,7 @@ Op.plot = -1;               % plot the derivatives as well
 
 % prepare the visualization window and graphics callback
 figh = figure;
-drawlandmarks(figh,landmarks);
+drawlandmarks(figh,map.landmarks);
 drawObstacles(figh,map.obstacles);
 scatter(x0(1),x0(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[1.0 0.0 0.0])
 scatter(xf(1),xf(2),500,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[0.0 1.0 0.0])
@@ -72,7 +71,7 @@ plotFn = @(x) set(line_handle,'Xdata',x(1,:),'Ydata',x(2,:));
 Op.plotFn = plotFn;
 
 % === run the optimization
-[b,~]= iLQG(DYNCST, b0, u0, Op);
+[b,u,L]= iLQG(DYNCST, b0, u0, Op);
 
 plot(b(1,:), b(2,:));
 
