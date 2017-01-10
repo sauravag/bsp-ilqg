@@ -6,6 +6,9 @@
 
 function main
 
+% add subfolders to path
+addpath(genpath('./'));
+
 clc;
 close all;
 dbstop if error;
@@ -13,7 +16,7 @@ dbstop if error;
 fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 % Initialize parameters
-T = 50; % Total time horizon
+T = 60; % Total time horizon
 
 dt = 0.2; % time step
 
@@ -23,7 +26,7 @@ landmarks = [-12,-1;-5,-1]; % Landmarks
 om = TwoDRangeModel(1:size(landmarks,2),landmarks); % observation model
 
 x0 = [-10;-10]; % intial state
-Sigma0 = [10 0.0;0.0, 10]; % intial covariance
+Sigma0 = [1.0 0.0;0.0, 1.0]; % intial covariance
 sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;sqrtSigma0(:)]; % initial belief state
 

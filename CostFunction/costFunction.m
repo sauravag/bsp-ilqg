@@ -51,10 +51,10 @@ for d = 1:stDim
     sqrtSigma(:,d) = b(d*stDim+1:(d+1)*stDim, 1);
 end
 
-Q_d = 2e-5*eye(stDim); % penalize distance to target
-Q_t = eye(stDim);
-R_t = eye(ctrlDim);
-Q_l = L*eye(stDim);
+Q_d = 2e-4*eye(stDim); % penalize distance to target
+Q_t = 10*eye(stDim); % penalize uncertainty
+R_t = eye(ctrlDim); % penalize control effort
+Q_l = L*eye(stDim); % penalize terminal error
 
 % deviation from goal
 delta_x = goal-x;
