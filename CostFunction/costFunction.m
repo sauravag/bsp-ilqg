@@ -51,9 +51,9 @@ for d = 1:stDim
     sqrtSigma(:,d) = b(d*stDim+1:(d+1)*stDim, 1);
 end
 
-Q_d = 2e-3*eye(stDim); % penalize distance to target
+Q_d = 2e-5*eye(stDim); % penalize distance to target
 Q_t = eye(stDim);
-R_t = 1.1*eye(ctrlDim);
+R_t = eye(ctrlDim);
 Q_l = L*eye(stDim);
 
 % deviation from goal
@@ -63,7 +63,8 @@ delta_x = goal-x;
 if any(final)
   c = delta_x'*Q_l*delta_x + trace(sqrtSigma*Q_l*sqrtSigma);
 else
-  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma) + 1e2*collisionChecker(x);
+  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma) + 1e3*~collisionChecker(x);
+
 end
 
 end

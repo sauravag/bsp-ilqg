@@ -13,7 +13,7 @@ dbstop if error;
 fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 % Initialize parameters
-T = 100; % Total time horizon
+T = 50; % Total time horizon
 
 dt = 0.2; % time step
 

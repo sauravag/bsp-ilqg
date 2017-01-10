@@ -10,7 +10,7 @@ function yesno = isStateValid(x, map)
 %   yesno: 1 if robot is not in collision
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-N = 50; % discretize robot body perimeter
+N = 25; % discretize robot body perimeter
 
 R = 0.92; % robot radius
 
