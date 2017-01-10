@@ -13,7 +13,7 @@ dbstop if error;
 fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 % Initialize parameters
-T = 50; % Total time horizon
+T = 100; % Total time horizon
 
 dt = 0.2; % time step
 
@@ -23,15 +23,20 @@ landmarks = [-12,-1;-5,-1]; % Landmarks
 om = TwoDRangeModel(1:size(landmarks,2),landmarks); % observation model
 
 x0 = [-10;-10]; % intial state
-xf = [0;4]; % target state
-
 Sigma0 = [10 0.0;0.0, 10]; % intial covariance
 sqrtSigma0 = sqrtm(Sigma0);
-
 b0 = [x0;sqrtSigma0(:)]; % initial belief state
 
+xf = [0;4]; % target state
+
 % straight line guess
-u0 = repmat((xf-x0)/T,1,T/dt).*ones(mm.ctDim,T/dt); % nominal controls
+u0 = [repmat(([0;-10]-x0)/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt),...
+       repmat((xf-[0;-10])/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt)];% nominal controls
+
+% Define environment
+load('Maps/mapA.mat'); % load map
+
+cc = @(x)isStateValid(x,map);
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
@@ -39,7 +44,7 @@ u0 = repmat((xf-x0)/T,1,T/dt).*ones(mm.ctDim,T/dt); % nominal controls
 full_DDP = false;
 
 % set up the optimization problem
-DYNCST  = @(b,u,i) belief_dyn_cst(b,u,xf,full_DDP,mm,om);
+DYNCST  = @(b,u,i) belief_dyn_cst(b,u,xf,full_DDP,mm,om,cc);
 
 % Op.lims  = [-10.0 10.0;         % Vx limits (m/s)
 %     -10.0  10.0];        % Vy limits (m/s)
@@ -49,6 +54,7 @@ Op.plot = -1;               % plot the derivatives as well
 % prepare the visualization window and graphics callback
 figh = figure;
 drawlandmarks(figh,landmarks);
+drawObstacles(figh,map.obstacles);
 scatter(x0(1),x0(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[1.0 0.0 0.0])
 scatter(xf(1),xf(2),500,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[0.0 1.0 0.0])
 set(gcf,'name','Belief Space Planning with iLQG','NumberT','off')
@@ -69,7 +75,7 @@ plot(b(1,:), b(2,:));
 
 end
 
-function [f,c,fx,fu,fxx,fxu,fuu,cx,cu,cxx,cxu,cuu] = belief_dyn_cst(b,u,xf,full_DDP,motionModel,obsModel)
+function [f,c,fx,fu,fxx,fxu,fuu,cx,cu,cxx,cxu,cuu] = belief_dyn_cst(b,u,xf,full_DDP,motionModel,obsModel, collisionChecker)
 % combine car dynamics and cost
 % use helper function finite_difference() to compute derivatives
 
@@ -78,7 +84,7 @@ ctDim = motionModel.ctDim;
 
 if nargout == 2
     f = beliefDynamics(b, u, motionModel, obsModel);
-    c = costFunction(b, u, xf, motionModel.stDim);
+    c = costFunction(b, u, xf, motionModel.stDim, collisionChecker);
 else
     % state and control indices
     ix = 1:beliefDim;
@@ -104,7 +110,7 @@ else
     end
     
     % cost first derivatives
-    xu_cost = @(xu) costFunction(xu(ix,:),xu(iu,:),xf,motionModel.stDim);
+    xu_cost = @(xu) costFunction(xu(ix,:),xu(iu,:),xf,motionModel.stDim, collisionChecker);
     J       = squeeze(finite_difference(xu_cost, [b; u]));
     cx      = J(ix,:);
     cu      = J(iu,:);
@@ -141,7 +147,7 @@ J       = pp(Y(:,:,2:end), -Y(:,:,1)) / h;
 J       = permute(J, [1 3 2]);
 end
 
-% Drawing function
+%% Drawing functions
 function drawlandmarks(h, landmarks)
 
 figure(h)
@@ -160,7 +166,19 @@ plot(landmarks(1,:),landmarks(2,:),'ks',...
     'MarkerFaceColor',[0.25,0.25,0.25])
 end
 
-% utility functions: singleton-expanded addition and multiplication
+function drawObstacles(h,obstacles)
+
+figure(h)
+hold on;
+
+for i = 1:length(obstacles)
+    obs = obstacles{i};
+    fill(obs(1,:),obs(2,:),'m');
+end
+
+end
+
+%% utility functions: singleton-expanded addition and multiplication
 function c = pp(a,b)
 c = bsxfun(@plus,a,b);
 end

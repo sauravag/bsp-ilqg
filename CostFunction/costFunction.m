@@ -1,4 +1,4 @@
-function c = costFunction(b, u, goal, stDim)
+function c = costFunction(b, u, goal, stDim, collisionChecker)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute cost for vector of states according to cost model given in Section 6 
 % of Van Den Berg et al. IJRR 2012
@@ -17,12 +17,12 @@ L = size(b,2);
 c = zeros(1,L);
 
 for i=1:L
-    c(i) =  stateCost(b(:,i),u(:,i), goal, stDim, L);
+    c(i) =  stateCost(b(:,i),u(:,i), goal, stDim, L, collisionChecker);
 end
 
 end
 
-function c = stateCost(b, u, goal, stDim, L)
+function c = stateCost(b, u, goal, stDim, L, collisionChecker)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute cost for a states according to cost model given in Section 6 
 % of Van Den Berg et al. IJRR 2012
@@ -63,7 +63,7 @@ delta_x = goal-x;
 if any(final)
   c = delta_x'*Q_l*delta_x + trace(sqrtSigma*Q_l*sqrtSigma);
 else
-  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma);
+  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma) + 1e2*collisionChecker(x);
 end
 
 end
