@@ -5,7 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Measure range to beacons, signal noise increases linearly with distance
-% Robot can see all beacons within max range
+% Robot can see all beacons
 classdef TwoDRangeModel < ObservationModelBase
     
     properties(Constant = true)
@@ -14,8 +14,8 @@ classdef TwoDRangeModel < ObservationModelBase
     end
     
     properties
-        sigma_b = 0.02; 
-        eta = 0.01;
+        sigma_b = 0.0; 
+        eta = 0.1;
     end
     
     methods
@@ -76,16 +76,13 @@ classdef TwoDRangeModel < ObservationModelBase
             
         end
         
-        function M = getObservationNoiseJacobian(obj,x,v,z)
-            
-            numObs = length(z);
-            
-            M = eye(numObs*obj.obsDim,numObs*obj.obsDim);
+        function M = getObservationNoiseJacobian(obj,x,v,z)                                    
+            M = diag(z);
         end
         
         function R = getObservationNoiseCovariance(obj,x,z)
                         
-            noise_std = repmat(obj.sigma_b,size(z,1),1) + z*obj.eta;
+            noise_std = repmat(obj.sigma_b,size(z,1),1) + (z)*obj.eta;
             
             R = diag(noise_std.^2);
             
@@ -93,7 +90,7 @@ classdef TwoDRangeModel < ObservationModelBase
         
         function v = computeObservationNoise(obj,z)
             
-            noise_std = repmat(obj.sigma_b,size(z,1),1) + z*obj.eta;
+            noise_std = repmat(obj.sigma_b,size(z,1),1) + (z)*obj.eta;
             
             v = randn(size(z,1),1).*noise_std;
         end

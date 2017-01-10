@@ -1,4 +1,4 @@
-function c = costFunction(b,u, stDim, L)
+function c = costFunction(b, u, goal, stDim)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute cost for vector of states according to cost model given in Section 6 
 % of Van Den Berg et al. IJRR 2012
@@ -7,22 +7,22 @@ function c = costFunction(b,u, stDim, L)
 %   b: Current belief vector
 %   u: Control
 %   stDim: State dimension
-%   L: Time horizon
+%
 % Outputs:
 %   c: cost estimate
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-T = size(b,2);
+L = size(b,2);
 
-c = zeros(1,T);
+c = zeros(1,L);
 
-for i=1:T
-    c(i) =  stateCost(b(:,i),u(:,i), stDim, L);
+for i=1:L
+    c(i) =  stateCost(b(:,i),u(:,i), goal, stDim, L);
 end
 
 end
 
-function c = stateCost(b,u, stDim, L)
+function c = stateCost(b, u, goal, stDim, L)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute cost for a states according to cost model given in Section 6 
 % of Van Den Berg et al. IJRR 2012
@@ -31,7 +31,7 @@ function c = stateCost(b,u, stDim, L)
 %   b: Current belief vector
 %   u: Control
 %   stDim: State dimension
-%   L: Time horizon
+%   L: Number of steps in horizon
 % Outputs:
 %   c: cost estimate
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,15 +51,19 @@ for d = 1:stDim
     sqrtSigma(:,d) = b(d*stDim+1:(d+1)*stDim, 1);
 end
 
+Q_d = 2e-3*eye(stDim); % penalize distance to target
 Q_t = eye(stDim);
-R_t = eye(ctrlDim);
-Q_l = 10*L*eye(stDim);
+R_t = 1.1*eye(ctrlDim);
+Q_l = L*eye(stDim);
+
+% deviation from goal
+delta_x = goal-x;
 
 % final cost
 if any(final)
-  c = x'*Q_l*x + trace(sqrtSigma*Q_l*sqrtSigma);
+  c = delta_x'*Q_l*delta_x + trace(sqrtSigma*Q_l*sqrtSigma);
 else
-  c = u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma);
+  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma);
 end
 
 end

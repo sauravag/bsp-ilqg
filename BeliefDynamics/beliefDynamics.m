@@ -13,11 +13,11 @@ function b_next = beliefDynamics(b, u, motionModel, obsModel)
 %   b_next: Updated belief vector
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-T = size(b,2);
+horizon = size(b,2);
 
 b_next = zeros(size(b));
 
-for i=1:T
+for i=1:horizon    
     b_next(:,i) = updateSingleBelief(b(:,i), u(:,i), motionModel, obsModel);
 end
 
@@ -38,6 +38,11 @@ function b_next = updateSingleBelief(b, u, motionModel, obsModel)
 % Outputs:
 %   b_next: Updated belief vector
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if isnan(u(1,:))
+    u = zeros(size(u));
+end
+
 % get the state space dimension
 stDim = motionModel.stDim;
 
@@ -72,11 +77,11 @@ K = (T*H')/(H*T*H' + M*M');
 sqrtSigma_next = sqrtm(T - K*H*T);
 
 % update belief
-W = zeros(stDim+stDim^2,2);
-W(1:stDim,:) = sqrtm(K*H*T);
-
-w = mvnrnd(zeros(1,stDim), eye(stDim),1);
-w = w';
+% W = zeros(stDim+stDim^2,2);
+% W(1:stDim,:) = sqrtm(K*H*T);
+% 
+% w = mvnrnd(zeros(1,stDim), eye(stDim),1);
+% w = w';
 
 g_b_u = zeros(size(b));
 g_b_u(1:stDim,1) = x_next;
@@ -85,6 +90,6 @@ for d = 1:stDim
     g_b_u(d*stDim+1:(d+1)*stDim,1) = sqrtSigma_next(:,d);
 end
 
-b_next = g_b_u + W*w;
+b_next = g_b_u ;%+ W*w;
 
 end
