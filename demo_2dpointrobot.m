@@ -4,7 +4,7 @@
 % Author: Saurav Agarwal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function main
+function demo_2dpointrobot
 
 % add subfolders to path
 addpath(genpath('./'));
