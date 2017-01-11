@@ -172,6 +172,7 @@ if size(x0,2) == 1
     diverge = true;
     for alpha = Op.Alpha
         [x,un,cost]  = forward_pass(x0(:,1),alpha*u,[],[],[],1,DYNCST,Op.lims,[]);
+        drawResult(Op.plotFn,x(:,:,1),2);
         % simplistic divergence test
         if all(abs(x(:)) < 1e8)
             u = un;

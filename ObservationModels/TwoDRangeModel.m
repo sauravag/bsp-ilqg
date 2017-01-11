@@ -4,9 +4,9 @@
 % Author: Saurav Agarwal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Measure range to beacons, signal strength decreases quadratically with distance
+% Measure range to beacons
 % Robot can see all beacons
-classdef TwoDBeaconModel < ObservationModelBase
+classdef TwoDRangeModel < ObservationModelBase
     
     properties(Constant = true)
         obsDim = 1;
@@ -20,7 +20,7 @@ classdef TwoDBeaconModel < ObservationModelBase
     
     methods
         
-        function obj = TwoDBeaconModel(landmarkIDs, landmarkPoses)
+        function obj = TwoDRangeModel(landmarkIDs, landmarkPoses)
             obj@ObservationModelBase();
             obj.landmarkIDs = landmarkIDs;
             obj.landmarkPoses = landmarkPoses;                                    
@@ -43,10 +43,10 @@ classdef TwoDBeaconModel < ObservationModelBase
                                                           
             if nargin == 2 % noisy observations
                 v = obj.computeObservationNoise(range);
-                z = 1./(range.^2+1) + v;
+                z = range + v;
                 
             elseif nargin > 2 && strcmp('nonoise',varargin{1}) == 1 % nonoise
-                z = 1./(range.^2+1);
+                z = range;
                 
             else                
                 error('unknown inputs')                
@@ -62,17 +62,16 @@ classdef TwoDBeaconModel < ObservationModelBase
             % Outputs:
             % H: Jacobian matrix
             
-            dx = obj.landmarkPoses(1,:) - x(1);
-            dy = obj.landmarkPoses(2,:) - x(2);
+            dx = x(1) - obj.landmarkPoses(1,:);
+            dy = x(2) - obj.landmarkPoses(2,:);
             
             r = sqrt(dx.^2 + dy.^2);                         
             
             H = zeros(size(r,2),2);
             
             for i = 1:size(r,2)
-                H(i,:) = (-2/(r(i)^2+1)^2)*[dx(i) dy(i)];
-            end
-            
+                H(i,:) = [dx(i)/r(i) dy(i)/r(i)];
+            end            
             
         end
         
@@ -83,7 +82,7 @@ classdef TwoDBeaconModel < ObservationModelBase
         
         function R = getObservationNoiseCovariance(obj,x,z)
                         
-            noise_std = repmat(obj.sigma_b,size(z,1),1) + (1./z)*obj.eta;
+            noise_std = repmat(obj.sigma_b,size(z,1),1) + z*obj.eta;
             
             R = diag(noise_std.^2);
             
@@ -91,7 +90,7 @@ classdef TwoDBeaconModel < ObservationModelBase
         
         function v = computeObservationNoise(obj,z)
             
-            noise_std = repmat(obj.sigma_b,size(z,1),1) + (1./z)*obj.eta;
+            noise_std = repmat(obj.sigma_b,size(z,1),1) + z*obj.eta;
             
             v = randn(size(z,1),1).*noise_std;
         end

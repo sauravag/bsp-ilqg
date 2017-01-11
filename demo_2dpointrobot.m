@@ -42,10 +42,10 @@ Sigma0 = eye(2); % intial covariance
 sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;sqrtSigma0(:)]; % initial belief state
 
-xf = [15;0]; % target state
+xf = [-11;-10]; % target state
 
 % 2-piece straight line guess for initial controls
-u0 = repmat((xf-x0)/T,1,T/dt) ;% nominal controls
+u0 = repmat((map.landmarks(:,2)-x0)/T,1,T/dt) ;% nominal controls
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
@@ -82,7 +82,7 @@ Op.plotFn = plotFn;
 [b,u_opt,L_opt]= iLQG(DYNCST, b0, u0, Op);
 
 % plot the final trajectory and covariances
-drawResult(line_handle, b, mm.stDim)
+drawResult(plotFns, b, mm.stDim)
 
 end
 

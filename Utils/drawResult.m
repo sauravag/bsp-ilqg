@@ -1,24 +1,22 @@
-function drawResult(h, b, stDim)
+function drawResult(plotFn, b, stDim)
 
 L = size(b,2);
 
-itp = linspace(1,L,100); % indexes to plot
+itp = round(linspace(1,L,10)); % indexes to plot
 
 x = b(1:stDim,:);
 
 pointsToPlot = [x(1,:) NaN;x(2,:) NaN];
 
 Ne = 50;% number of points in ellipse drawing
-confidence = 0.68; % draw the (1-sigma) confidence ellipse
+% confidence = 0.68; % draw the (1-sigma) confidence ellipse
 
 inc= 2*pi/Ne;
 phi= 0:inc:2*pi;
 
 % get covariances
 for i = itp
-    
-    i = ceil(i);
-    
+        
     sqrtSigma = zeros(stDim,stDim);
     
     for d = 1:stDim
@@ -31,13 +29,12 @@ for i = itp
     pointsToPlot = [pointsToPlot ptemp];
 end      
             
-set(h, 'Xdata', pointsToPlot(1,:), 'Ydata', pointsToPlot(2,:))
+plotFn(pointsToPlot);
 
 end
 
 function p= make_ellipse(x,r,s, phi)
 % make a single 2-D ellipse of s-sigmas over phi angle intervals
 a= s*r*[cos(phi); sin(phi)];
-p(2,:)= [a(2,:)+x(2) NaN];
-p(1,:)= [a(1,:)+x(1) NaN];
+p=[a(1,:)+x(1) NaN;a(2,:)+x(2) NaN];
 end

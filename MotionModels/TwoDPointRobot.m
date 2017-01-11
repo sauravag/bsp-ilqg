@@ -24,7 +24,7 @@ classdef TwoDPointRobot < MotionModelBase
         end
         
         function x_next = evolve(obj,x,u,w) % discrete motion model equation            
-            x_next = x + u*obj.dt + w;
+            x_next = x + u*obj.dt + sqrt(obj.dt)*w;
         end
         
         function A = getStateTransitionJacobian(obj,x,u,w) % state Jacobian
@@ -36,7 +36,7 @@ classdef TwoDPointRobot < MotionModelBase
         end
         
         function G = getProcessNoiseJacobian(obj,x,u,w) % noise Jacobian
-            G = eye(2);
+            G = sqrt(obj.dt)*eye(2);
         end
         
         function Q = getProcessNoiseCovariance(obj,x,u) % compute the covariance of process noise based on the current poistion and controls
