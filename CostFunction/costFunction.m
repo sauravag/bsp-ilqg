@@ -1,4 +1,4 @@
-function c = costFunction(b, u, goal, stDim, collisionChecker)
+function c = costFunction(b, u, goal, L, stDim, collisionChecker)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute cost for vector of states according to cost model given in Section 6 
 % of Van Den Berg et al. IJRR 2012
@@ -6,17 +6,17 @@ function c = costFunction(b, u, goal, stDim, collisionChecker)
 % Input:
 %   b: Current belief vector
 %   u: Control
+%   goal: target state
+%   L: Total segments
 %   stDim: state space dimension for robot
 %
 % Outputs:
 %   c: cost estimate
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-L = size(b,2);
+c = zeros(1,size(b,2));
 
-c = zeros(1,L);
-
-for i=1:L
+for i=1:size(b,2)
     c(i) =  stateCost(b(:,i),u(:,i), goal, stDim, L, collisionChecker);
 end
 
@@ -53,10 +53,9 @@ for d = 1:stDim
 end
 
 Q_d = 0*eye(stDim); % penalize distance to target
-Q_t = 1e2*eye(stDim); % penalize uncertainty
+Q_t = 2*eye(stDim); % penalize uncertainty
 R_t = eye(ctrlDim); % penalize control effort
-Q_l = L*eye(stDim); % penalize terminal error
-w_c = 1.0; % collision weight
+Q_l = 10*L*eye(stDim); % penalize terminal error
 
 % deviation from goal
 delta_x = goal-x;
@@ -65,7 +64,7 @@ delta_x = goal-x;
 if any(final)
   c = delta_x'*Q_l*delta_x + trace(sqrtSigma*Q_l*sqrtSigma);
 else
-  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma) + w_c*collisionCost(x,sqrtSigma,collisionChecker);
+  c = delta_x'*Q_d*delta_x + u'*R_t*u + trace(sqrtSigma*Q_t*sqrtSigma) + collisionCost(x,sqrtSigma,collisionChecker);
 end
 
 end

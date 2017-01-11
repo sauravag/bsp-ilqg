@@ -90,6 +90,8 @@ if conf == 0.9545 && r == 2
     k = 2.4860; % known values are faster to hard code
 elseif conf == 0.9973 && r == 2
     k = 3.4393; % known values are faster to hard code
+elseif conf == 0.68 && r == 2
+    k = 1.5096; % known values are faster to hard code    
 else
     k = sqrt(qchisq(conf,r)); % r is the number of dimensions (degrees of freedom)
 end

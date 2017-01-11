@@ -21,7 +21,7 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 %% Initialize planning scenario
 
-T = 100; % Total time horizon
+T = 50; % Total time horizon
 
 dt = 0.1; % time step
 
@@ -29,7 +29,7 @@ load('Maps/mapA.mat'); % load map
 
 mm = TwoDPointRobot(dt); % motion model
 
-om = TwoDRangeModel(1:size(map.landmarks,2),map.landmarks); % observation model
+om = TwoDBeaconModel(1:size(map.landmarks,2),map.landmarks); % observation model
 
 global ROBOT_RADIUS;
 ROBOT_RADIUS = 0.92; % robot radius is needed by collision checker
@@ -37,16 +37,15 @@ ROBOT_RADIUS = 0.92; % robot radius is needed by collision checker
 cc = @(x)isStateValid(x,map); % collision checker
 
 % Setup start and goal/target state
-x0 = [-12;-15]; % intial state
-Sigma0 = [0.01 0.0;0.0, 0.01]; % intial covariance
+x0 = [-18;0]; % intial state
+Sigma0 = eye(2); % intial covariance
 sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;sqrtSigma0(:)]; % initial belief state
 
-xf = [0;4]; % target state
+xf = [15;0]; % target state
 
 % 2-piece straight line guess for initial controls
-u0 = [repmat(([0;-10]-x0)/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt),...
-       repmat((xf-[0;-10])/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt)];% nominal controls
+u0 = repmat((xf-x0)/T,1,T/dt) ;% nominal controls
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
@@ -54,7 +53,7 @@ u0 = [repmat(([0;-10]-x0)/(T/2),1,(T/2)/dt).*ones(mm.ctDim,(T/2)/dt),...
 full_DDP = false;
 
 % set up the optimization problem
-DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,full_DDP,mm,om,cc);
+DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,T/dt,full_DDP,mm,om,cc);
 
 % control constraints are optional
 % Op.lims  = [-10.0 10.0;         % Vx limits (m/s)
@@ -70,7 +69,7 @@ scatter(x0(1),x0(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[1.0 0.
 scatter(xf(1),xf(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[0.0 1.0 0.0])
 set(gcf,'name','Belief Space Planning with iLQG','NumberT','off')
 set(gca,'Color',[0.25 0.25 0.25]);
-set(gca,'xlim',[-20 10],'ylim',[-20 10],'DataAspectRatio',[1 1 1])
+set(gca,'xlim',map.bounds(1,[1,2]),'ylim',map.bounds(2,[1,3]),'DataAspectRatio',[1 1 1])
 xlabel('X (m)'); ylabel('Y (m)');
 box on
 

@@ -1,4 +1,4 @@
-function [g,c,gb,gu,gbb,gbu,guu,cb,cu,cbb,cbu,cuu] = beliefDynCost(b,u,xf,full_DDP,motionModel,obsModel, collisionChecker)
+function [g,c,gb,gu,gbb,gbu,guu,cb,cu,cbb,cbu,cuu] = beliefDynCost(b,u,xf,L,full_DDP,motionModel,obsModel, collisionChecker)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A utility function that combines belief dynamics and cost
 % uses helper function finite_difference() to compute derivatives
@@ -6,6 +6,7 @@ function [g,c,gb,gu,gbb,gbu,guu,cb,cu,cbb,cbu,cuu] = beliefDynCost(b,u,xf,full_D
 %   b: belief
 %   u: controls
 %   xf: target state
+%   L: Total segments
 %   full_DDP: whether to use 2nd order derivates of dynamics
 %   motionModel: robot's motion model
 %   obsModel: Sensing model
@@ -31,7 +32,7 @@ ctDim = motionModel.ctDim;
 
 if nargout == 2
     g = beliefDynamics(b, u, motionModel, obsModel);
-    c = costFunction(b, u, xf, motionModel.stDim, collisionChecker);
+    c = costFunction(b, u, xf, L, motionModel.stDim, collisionChecker);
 else
     % belief state and control indices
     ib = 1:beliefDim;
@@ -57,7 +58,7 @@ else
     end
     
     % cost first derivatives
-    xu_cost = @(xu) costFunction(xu(ib,:),xu(iu,:),xf,motionModel.stDim, collisionChecker);
+    xu_cost = @(xu) costFunction(xu(ib,:),xu(iu,:),xf,L,motionModel.stDim, collisionChecker);
     J       = squeeze(finiteDifference(xu_cost, [b; u]));
     cb      = J(ib,:);
     cu      = J(iu,:);

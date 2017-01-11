@@ -6,7 +6,7 @@
 
 % Measure range to beacons, signal strength decreases quadratically with distance
 % Robot can see all beacons
-classdef TwoDRangeModel < ObservationModelBase
+classdef TwoDBeaconModel < ObservationModelBase
     
     properties(Constant = true)
         obsDim = 1;
@@ -20,7 +20,7 @@ classdef TwoDRangeModel < ObservationModelBase
     
     methods
         
-        function obj = TwoDRangeModel(landmarkIDs, landmarkPoses)
+        function obj = TwoDBeaconModel(landmarkIDs, landmarkPoses)
             obj@ObservationModelBase();
             obj.landmarkIDs = landmarkIDs;
             obj.landmarkPoses = landmarkPoses;                                    
@@ -70,7 +70,7 @@ classdef TwoDRangeModel < ObservationModelBase
             H = zeros(size(r,2),2);
             
             for i = 1:size(r,2)
-                H(i,:) = (-1/(r(i)+1)^2)*[-dx(i)/r(i) -dy(i)/r(i)];
+                H(i,:) = (-2/(r(i)^2+1)^2)*[dx(i) dy(i)];
             end
             
             
