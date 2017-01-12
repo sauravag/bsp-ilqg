@@ -1,6 +1,17 @@
-
 function animate(figh, plotFn, b0, b_nom, u_nom, L, motionModel, obsModel)
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Animate the robot's motion from start to goal
+%
+% Inputs:
+%   figh: Figure handle in which to draw
+%   plotfn: function handle to plot cov ellipse
+%   b0: initial belief
+%   b_nom: nominal belief trajectory
+%   u_nom: nominal controls
+%   L: feedback gain
+%   motionModel: robot motion model
+%   obsModel: observation model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 stDim = motionModel.stDim;
 
 xt = b0(1:stDim); % true state of robot
@@ -17,6 +28,7 @@ rh = []; % robot disk drawing handle
 figure(figh);
 plot(b_nom(1,:),b_nom(2,:),'g', 'LineWidth',2);
 
+% create robot body points
 global ROBOT_RADIUS
 robotDisk = ROBOT_RADIUS*[cos(linspace(0,2*pi,50));...
                           sin(linspace(0,2*pi,50))];
@@ -52,10 +64,7 @@ for i = 1:size(u_nom,2)
     K = (P_prd*H')/S;
     P = (eye(stDim) - K*H)*P_prd;    
     x = x_prd + K*(z - z_prd);
-    
-    b = [x(:);P(:)];
-    
-    
+            
     delete(rh)
     rh = fill(x(1) + robotDisk(1,:),x(2) + robotDisk(2,:),'b');
     drawResult(plotFn,b,2);            
