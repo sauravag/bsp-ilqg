@@ -53,11 +53,10 @@ for d = 1:stDim
     P(:,d) = b(d*stDim+1:(d+1)*stDim, 1);
 end
 
-Q_sc = 0*eye(stDim); % penalize distance to target
 Q_t = 10*eye(stDim); % penalize uncertainty
 R_t = 0.1*eye(ctrlDim); % penalize control effort
-Q_l = L*eye(stDim); % penalize terminal error
-w_cc = 20;
+Q_l = 10*L*eye(stDim); % penalize terminal error
+w_cc = 50;
 
 % deviation from goal
 delta_x = goal-x;
@@ -82,9 +81,7 @@ if any(final)
   ic = trace(P*Q_l*P);
   
 else
-    
-  sc = delta_x'*Q_sc*delta_x;
-  
+      
   ic = trace(P*Q_t*P);
   
   uc = u'*R_t*u;
@@ -123,13 +120,15 @@ global ROBOT_RADIUS
 R_orig =  ROBOT_RADIUS; % save robot radius
 
 % number of standard deviations at which robot collides
-for s = 0:1:3
+% at s = 0, f goes to infinite so not good -> better to use small value of 0.01
+for s = [0.01 1 2 3 4] 
     % inflate robot radius 
     ROBOT_RADIUS = R_orig + s*d;
     
     % if robot collided
-    if stateValidityChecker(x) == 0
-        f = -log(chi2cdf(s^2, stDim));
+    if stateValidityChecker(x) == 0        
+        f = -log(chi2cdf(s^2, stDim));                
+        
         ROBOT_RADIUS = R_orig; % reset robot radius
         return;
     end
