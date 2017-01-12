@@ -43,7 +43,7 @@ else
     J       = finiteDifference(xu_dyn, [b; u]);
     gb      = J(:,ib,:);
     gu      = J(:,iu,:);
-    
+
     % dynamics second derivatives
     if full_DDP
         xu_Jcst = @(xu) finite_difference(xu_dyn, xu);
@@ -64,13 +64,15 @@ else
     cu      = J(iu,:);
     
     % cost second derivatives
+    tStart = tic;
     xu_Jcst = @(xu) squeeze(finiteDifference(xu_cost, xu));
     JJ      = finiteDifference(xu_Jcst, [b; u]);
     JJ      = 0.5*(JJ + permute(JJ,[2 1 3])); %symmetrize
     cbb     = JJ(ib,ib,:);
     cbu     = JJ(ib,iu,:);
-    cuu     = JJ(iu,iu,:);
-    
+    cuu     = JJ(iu,iu,:);        
+    fprintf('Time to do Cost Hessian: %f seconds\n', toc(tStart))
+
     [g,c] = deal([]);
 end
 end

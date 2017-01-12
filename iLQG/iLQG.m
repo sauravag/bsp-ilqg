@@ -111,10 +111,10 @@ function [x, u, L, Vx, Vxx, cost, trace, stop] = iLQG(DYNCST, x0, u0, Op)
 %---------------------- user-adjustable parameters ------------------------
 defaults = {'lims',           [],...            control limits
             'parallel',       true,...          use parallel line-search?
-            'Alpha',          10.^linspace(0,-3,11),... backtracking coefficients
-            'tolFun',         1e-3,...          reduction exit criterion
+            'Alpha',          10.^linspace(0,-3,10),... backtracking coefficients
+            'tolFun',         1e-4,...          reduction exit criterion
             'tolGrad',        1e-4,...          gradient exit criterion
-            'maxIter',        100,...           maximum iterations            
+            'maxIter',        50,...           maximum iterations            
             'lambda',         1,...             initial value for lambda
             'dlambda',        1,...             initial value for dlambda
             'lambdaFactor',   1.5,...           lambda scaling factor
@@ -173,6 +173,7 @@ if size(x0,2) == 1
     for alpha = Op.Alpha
         [x,un,cost]  = forward_pass(x0(:,1),alpha*u,[],[],[],1,DYNCST,Op.lims,[]);
         drawResult(Op.plotFn,x(:,:,1),2);
+        pause(3);
         % simplistic divergence test
         if all(abs(x(:)) < 1e8)
             u = un;
@@ -195,7 +196,8 @@ end
 trace(1).cost = sum(cost(:));
 
 % user plotting
-Op.plotFn(x);
+drawResult(Op.plotFn,x,2);
+% Op.plotFn(x);
 
 if diverge
     [Vx,Vxx, stop]  = deal(nan);
@@ -341,7 +343,8 @@ for iter = 1:Op.maxIter
         x              = xnew;
         cost           = costnew;
         flgChange      = 1;
-        Op.plotFn(x);
+        drawResult(Op.plotFn,x,2);
+%         Op.plotFn(x);
         
         % terminate ?
         if dcost < Op.tolFun
@@ -602,7 +605,7 @@ if figures ~= 0  && ( mod(mT,figures) == 0 || init == 2 )
     fig1 = findobj(0,'name','iLQG');
     if  isempty(fig1)
         fig1 = figure();
-        set(fig1,'NumberTitle','off','Name','iLQG','KeyPressFcn',@Kpress,'user',0,'toolbar','none');
+        set(fig1,'NumberTitle','off','Name','iLQG','KeyPressFcn',@Kpress,'user',0,'toolbar','none', 'WindowStyle', 'docked');
         fprintf('Type ESC in the graphics window to terminate early.\n')
     end
     
@@ -664,7 +667,7 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
     fig2 = findobj(0,'name','iLQG - derivatives');
     if  isempty(fig2)
         fig2 = figure();
-        set(fig2,'NumberTitle','off','Name','iLQG - derivatives','KeyPressFcn',@Kpress,'user',0);
+        set(fig2,'NumberTitle','off','Name','iLQG - derivatives','KeyPressFcn',@Kpress,'user',0, 'WindowStyle', 'docked');
     end
     
     if length(T) == 1

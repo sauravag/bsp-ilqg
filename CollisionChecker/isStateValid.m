@@ -10,28 +10,36 @@ function yesno = isStateValid(x, map)
 %   yesno: 1 if robot is not in collision
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-N = 100; % discretize robot body perimeter
-
 % robot radius
 global ROBOT_RADIUS;
 R = ROBOT_RADIUS;
 
-theta = linspace(0,2*pi,N);
+N = 20; % discretize robot body
+delta_theta = 2*pi/N;
+theta = 0:delta_theta:2*pi-delta_theta;
 
-% robot body
-robot = repmat(x,1,N) + R*[cos(theta);sin(theta)];
+% robot perimeter
+ptPerimiter = repmat(x,1,N) + R*[cos(theta);sin(theta)] ;
+robot = ptPerimiter;
 
-% check if robot is within boundary
-bounds_xv = map.bounds(1,:);
-bounds_yv = map.bounds(2,:);
-
-inbounds = inpolygon(robot(1,:),robot(2,:),bounds_xv,bounds_yv);
-
-% if robot not within bounds return false
-if sum(inbounds) ~= N
-    yesno = 0;
-    return;
+% get points on lines joining center to perimeter point
+for i =1:N
+    lpts_x = linspace(x(1),ptPerimiter(1,i),N/2);
+    lpts_y = linspace(x(2),ptPerimiter(2,i),N/2);    
+    robot = [robot [lpts_x;lpts_y]];
 end
+    
+    
+% % check if robot is within boundary
+% bounds_xv = map.bounds(1,:);
+% bounds_yv = map.bounds(2,:);
+% inbounds = inpolygon(robot(1,:),robot(2,:),bounds_xv,bounds_yv);
+% 
+% % if robot not within bounds return false
+% if sum(inbounds) ~= size(robot,2)
+%     yesno = 0;
+%     return;
+% end
 
 for i=1:length(map.obstacles)
     obs = map.obstacles{i};

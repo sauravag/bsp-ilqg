@@ -4,9 +4,9 @@
 % Author: Saurav Agarwal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Measure range to beacons
+% Measure signal to beacons, signal strength falls quadratically with distance.
 % Robot can see all beacons
-classdef TwoDRangeModel < ObservationModelBase
+classdef TwoDBeaconModel < ObservationModelBase
     
     properties(Constant = true)
         obsDim = 1;
@@ -15,12 +15,11 @@ classdef TwoDRangeModel < ObservationModelBase
     
     properties
         sigma_b = 0.1; 
-        eta = 0.01;
     end
     
     methods
         
-        function obj = TwoDRangeModel(landmarkIDs, landmarkPoses)
+        function obj = TwoDBeaconModel(landmarkIDs, landmarkPoses)
             obj@ObservationModelBase();
             obj.landmarkIDs = landmarkIDs;
             obj.landmarkPoses = landmarkPoses;                                    
@@ -43,10 +42,10 @@ classdef TwoDRangeModel < ObservationModelBase
                                                           
             if nargin == 2 % noisy observations
                 v = obj.computeObservationNoise(range);
-                z = range + v;
+                z = 1./(range.^2+1) + v;
                 
             elseif nargin > 2 && strcmp('nonoise',varargin{1}) == 1 % nonoise
-                z = range;
+                z = 1./(range.^2+1);
                 
             else                
                 error('unknown inputs')                
@@ -70,18 +69,19 @@ classdef TwoDRangeModel < ObservationModelBase
             H = zeros(size(r,2),2);
             
             for i = 1:size(r,2)
-                H(i,:) = [dx(i)/r(i) dy(i)/r(i)];
+                    H(i,:) = (-2/(r(i)^2+1)^2)*[dx(i) dy(i)];
             end            
             
         end
         
         function M = getObservationNoiseJacobian(obj,x,v,z)
-            M = diag(z);
+            n = length(z);
+            M = eye(n);
         end
         
         function R = getObservationNoiseCovariance(obj,x,z)
                         
-            noise_std = repmat(obj.sigma_b,size(z,1),1) + z*obj.eta;
+            noise_std = repmat(obj.sigma_b,size(z,1),1);
             
             R = diag(noise_std.^2);
             
@@ -89,7 +89,7 @@ classdef TwoDRangeModel < ObservationModelBase
         
         function v = computeObservationNoise(obj,z)
             
-            noise_std = repmat(obj.sigma_b,size(z,1),1) + z*obj.eta;
+            noise_std = repmat(obj.sigma_b,size(z,1),1);
             
             v = randn(size(z,1),1).*noise_std;
         end
