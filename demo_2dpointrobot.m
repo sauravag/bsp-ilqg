@@ -21,7 +21,7 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 %% Initialize planning scenario
 
-T = 100; % Total time horizon
+T = 50; % Total time horizon
 
 dt = 0.2; % time step
 
@@ -38,7 +38,7 @@ cc = @(x)isStateValid(x,map); % collision checker
 
 % Setup start and goal/target state
 x0 = [-15;0]; % intial state
-P = 0.25*eye(2); % intial covariance
+P = eye(2); % intial covariance
 % sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;P(:)]; % initial belief state
 
