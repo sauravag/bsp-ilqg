@@ -25,7 +25,7 @@ T = 50; % Total time horizon
 
 dt = 0.2; % time step
 
-load('Maps/mapA.mat'); % load map
+load('Maps/mapB.mat'); % load map
 
 mm = TwoDPointRobot(dt); % motion model
 
@@ -34,15 +34,15 @@ om = TwoDBeaconModel(1:size(map.landmarks,2),map.landmarks); % observation model
 global ROBOT_RADIUS;
 ROBOT_RADIUS = 0.46; % robot radius is needed by collision checker
 
-cc = @(x)isStateValid(x,map); % collision checker
+svc = @(x)isStateValid(x,map); % state validity checker (collision)
 
 % Setup start and goal/target state
-x0 = [-15;0]; % intial state
-P = eye(2); % intial covariance
+x0 = map.start; % intial state
+P = 0.4^2*eye(2); % intial covariance
 % sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;P(:)]; % initial belief state
 
-xf = [15;0]; % target state
+xf = map.goal; % target state
 
 % 2-piece straight line guess for initial controls
 u0 = repmat((xf-x0)/T,1,T/dt) + 1e-2*randn(mm.ctDim,T/dt) ;% nominal controls
@@ -53,7 +53,7 @@ u0 = repmat((xf-x0)/T,1,T/dt) + 1e-2*randn(mm.ctDim,T/dt) ;% nominal controls
 full_DDP = false;
 
 % set up the optimization problem
-DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,T/dt,full_DDP,mm,om,cc);
+DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,T/dt,full_DDP,mm,om,svc);
 
 % control constraints are optional
 % Op.lims  = [-2.0 2.0;         % Vx limits (m/s)
@@ -82,7 +82,9 @@ Op.plotFn = plotFn;
 [b,u_opt,L_opt]= iLQG(DYNCST, b0, u0, Op);
 
 % plot the final trajectory and covariances
-animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om);
+if animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svc)
+    warning('Robot collided during exeuction')
+end
 
 end
 

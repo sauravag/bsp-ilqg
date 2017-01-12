@@ -1,4 +1,4 @@
-function animate(figh, plotFn, b0, b_nom, u_nom, L, motionModel, obsModel)
+function failed = animate(figh, plotFn, b0, b_nom, u_nom, L, motionModel, obsModel, stateValidityChecker)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Animate the robot's motion from start to goal
 %
@@ -64,7 +64,13 @@ for i = 1:size(u_nom,2)
     K = (P_prd*H')/S;
     P = (eye(stDim) - K*H)*P_prd;    
     x = x_prd + K*(z - z_prd);
-            
+    
+    % if robot is in collision
+    if stateValidityChecker(x) == 0
+        failed = 1;
+        return;
+    end    
+        
     delete(rh)
     rh = fill(x(1) + robotDisk(1,:),x(2) + robotDisk(2,:),'b');
     drawResult(plotFn,b,2);            
@@ -72,4 +78,5 @@ for i = 1:size(u_nom,2)
     pause(0.005);
 end
 
+failed = 0;
 end
