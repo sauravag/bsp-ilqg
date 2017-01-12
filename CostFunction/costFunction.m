@@ -56,7 +56,7 @@ end
 Q_t = 10*eye(stDim); % penalize uncertainty
 R_t = 0.1*eye(ctrlDim); % penalize control effort
 Q_l = 10*L*eye(stDim); % penalize terminal error
-w_cc = 50;
+w_cc = 10;
 
 % deviation from goal
 delta_x = goal-x;
@@ -126,10 +126,12 @@ for s = [0.01 1 2 3 4]
     ROBOT_RADIUS = R_orig + s*d;
     
     % if robot collided
-    if stateValidityChecker(x) == 0        
+    if stateValidityChecker(x) == 0    
+        
         f = -log(chi2cdf(s^2, stDim));                
         
         ROBOT_RADIUS = R_orig; % reset robot radius
+        
         return;
     end
 end

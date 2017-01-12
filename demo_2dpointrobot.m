@@ -25,7 +25,7 @@ T = 50; % Total time horizon
 
 dt = 0.2; % time step
 
-load('Maps/mapB.mat'); % load map
+load('Maps/mapA.mat'); % load map
 
 mm = TwoDPointRobot(dt); % motion model
 
@@ -68,7 +68,7 @@ drawObstacles(figh,map.obstacles);
 scatter(x0(1),x0(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[1.0 0.0 0.0])
 scatter(xf(1),xf(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[0.0 1.0 0.0])
 set(gcf,'name','Belief Space Planning with iLQG','NumberT','off');
-set(gca,'Color',[0.25 0.25 0.25]);
+set(gca,'Color',[0.0 0.0 0.0]);
 set(gca,'xlim',map.bounds(1,[1,2]),'ylim',map.bounds(2,[1,3]),'DataAspectRatio',[1 1 1])
 xlabel('X (m)'); ylabel('Y (m)');
 box on
