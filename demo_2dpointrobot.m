@@ -45,7 +45,7 @@ b0 = [x0;P(:)]; % initial belief state
 xf = map.goal; % target state
 
 % 2-piece straight line guess for initial controls
-u0 = repmat((xf-x0)/T,1,T/dt) + 1e-2*randn(mm.ctDim,T/dt) ;% nominal controls
+u0 = repmat((xf-x0)/T,1,T/dt);% nominal controls
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
