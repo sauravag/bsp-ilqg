@@ -17,6 +17,10 @@ rh = []; % robot disk drawing handle
 figure(figh);
 plot(b_nom(1,:),b_nom(2,:),'g', 'LineWidth',2);
 
+global ROBOT_RADIUS
+robotDisk = ROBOT_RADIUS*[cos(linspace(0,2*pi,50));...
+                          sin(linspace(0,2*pi,50))];
+
 for i = 1:size(u_nom,2)
     
     b = [x(:);P(:)]; % current belief
@@ -51,10 +55,10 @@ for i = 1:size(u_nom,2)
     
     b = [x(:);P(:)];
     
-    drawResult(plotFn,b,2);
-        
+    
     delete(rh)
-    rh = scatter(x(1),x(2),100,'filled','MarkerFaceAlpha',1,'MarkerFaceColor',[1.0 0.0 0.0]);
+    rh = fill(x(1) + robotDisk(1,:),x(2) + robotDisk(2,:),'b');
+    drawResult(plotFn,b,2);            
     drawnow;
     pause(0.005);
 end
