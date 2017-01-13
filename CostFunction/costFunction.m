@@ -54,9 +54,9 @@ for d = 1:stDim
 end
 
 Q_t = 10*eye(stDim); % penalize uncertainty
-R_t = 0.1*eye(ctrlDim); % penalize control effort
+R_t = 0.25*eye(ctrlDim); % penalize control effort
 Q_l = 10*L*eye(stDim); % penalize terminal error
-w_cc = 10;
+w_cc = 1;
 
 % deviation from goal
 delta_x = goal-x;

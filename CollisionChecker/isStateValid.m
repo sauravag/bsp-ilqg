@@ -7,7 +7,7 @@ function yesno = isStateValid(x, map)
 %   varargin: robot radius to override default
 %  
 % Output:
-%   yesno: 1 if robot is not in collision
+%   yesno: 1 if robot is not in collision (valid state)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % robot radius

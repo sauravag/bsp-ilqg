@@ -12,6 +12,7 @@ classdef MotionModelBase < handle
         sigma_b_u; % A constant bias intensity (covariance) of the control noise
         eta_u; % A coefficient, which makes the control noise intensity proportional to the control signal       
         zeroNoise;
+        ctrlLim; % control limits
     end
     
     properties
@@ -30,6 +31,8 @@ classdef MotionModelBase < handle
         Q = getProcessNoiseCovariance(x,u) % compute the covariance of process noise based on the current poistion and controls
         
         w = generateProcessNoise(x,u) % simulate (generate) process noise based on the current state and controls
+        
+        U = generateOpenLoopControls(obj,x0,xf) % generate open loop controls from start to end point
         
     end
 end

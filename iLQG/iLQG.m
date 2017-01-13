@@ -111,16 +111,16 @@ function [x, u, L, Vx, Vxx, cost, trace, stop] = iLQG(DYNCST, x0, u0, Op)
 %---------------------- user-adjustable parameters ------------------------
 defaults = {'lims',           [],...            control limits
             'parallel',       true,...          use parallel line-search?
-            'Alpha',          10.^linspace(0,-3,10),... backtracking coefficients
+            'Alpha',          10.^linspace(0,-3,12),... backtracking coefficients
             'tolFun',         1e-4,...          reduction exit criterion
             'tolGrad',        1e-4,...          gradient exit criterion
             'maxIter',        50,...           maximum iterations            
             'lambda',         1,...             initial value for lambda
             'dlambda',        1,...             initial value for dlambda
-            'lambdaFactor',   1.5,...           lambda scaling factor
+            'lambdaFactor',   1.4,...           lambda scaling factor
             'lambdaMax',      1e16,...          lambda maximum value
             'lambdaMin',      1e-6,...          below this value lambda = 0
-            'regType',        2,...             regularization type 1: q_uu+lambda*eye(); 2: V_xx+lambda*eye()
+            'regType',        1,...             regularization type 1: q_uu+lambda*eye(); 2: V_xx+lambda*eye()
             'zMin',           0,...             minimal accepted reduction ratio
             'diffFn',         [],...            user-defined diff for sub-space optimization
             'plot',           0,...             0: no;  k>0: every k iters; k<0: every k iters, with derivs window

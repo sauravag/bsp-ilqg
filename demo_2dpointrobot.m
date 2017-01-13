@@ -21,11 +21,9 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 %% Initialize planning scenario
 
-T = 50; % Total time horizon
+dt = 0.05; % time step
 
-dt = 0.2; % time step
-
-load('Maps/mapA.mat'); % load map
+load('Maps/mapB.mat'); % load map
 
 mm = TwoDPointRobot(dt); % motion model
 
@@ -44,8 +42,12 @@ b0 = [x0;P(:)]; % initial belief state
 
 xf = map.goal; % target state
 
-% 2-piece straight line guess for initial controls
-u0 = repmat((xf-x0)/T,1,T/dt);% nominal controls
+planner = RRT(map,mm,svc);
+
+[~,u0] = planner.plan(x0,xf);
+
+nDT = size(u0,2); % Time steps
+% u0 = repmat((xf-x0)/T,1,T/dt);%  2-piece straight line guess for initial controls
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
@@ -53,7 +55,7 @@ u0 = repmat((xf-x0)/T,1,T/dt);% nominal controls
 full_DDP = false;
 
 % set up the optimization problem
-DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,T/dt,full_DDP,mm,om,svc);
+DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svc);
 
 % control constraints are optional
 % Op.lims  = [-2.0 2.0;         % Vx limits (m/s)
