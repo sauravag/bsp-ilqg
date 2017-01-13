@@ -14,7 +14,7 @@ function yesno = isStateValid(x, map)
 global ROBOT_RADIUS;
 R = ROBOT_RADIUS;
 
-N = 30; % discretize robot body
+N = 40; % discretize robot body
 delta_theta = 2*pi/N;
 theta = 0:delta_theta:2*pi-delta_theta;
 
@@ -43,8 +43,9 @@ end
 
 for i=1:length(map.obstacles)
     obs = map.obstacles{i};
+%     ts = tic;
     collided = inpolygon(robot(1,:),robot(2,:),obs(1,:),obs(2,:));
-    
+%     fprintf('Time to CC: %f s \n', toc(ts))
     % if robot perimiter point inside polygon it collided
     if any(collided)
         yesno = 0;

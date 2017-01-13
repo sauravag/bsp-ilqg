@@ -111,7 +111,7 @@ function [x, u, L, Vx, Vxx, cost, trace, stop] = iLQG(DYNCST, x0, u0, Op)
 %---------------------- user-adjustable parameters ------------------------
 defaults = {'lims',           [],...            control limits
             'parallel',       true,...          use parallel line-search?
-            'Alpha',          10.^linspace(0,-3,12),... backtracking coefficients
+            'Alpha',          10.^linspace(0,-3,11),... backtracking coefficients
             'tolFun',         1e-4,...          reduction exit criterion
             'tolGrad',        1e-4,...          gradient exit criterion
             'maxIter',        50,...           maximum iterations            

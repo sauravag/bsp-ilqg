@@ -13,6 +13,7 @@ function demo_2dpointrobot
 % add subfolders to path
 addpath(genpath('./'));
 
+clear variables
 clc;
 close all;
 dbstop if error;
