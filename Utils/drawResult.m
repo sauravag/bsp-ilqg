@@ -18,6 +18,7 @@ pointsToPlot = [x(1,:) NaN;x(2,:) NaN];
 Ne = 50;% number of points in ellipse drawing
 inc= 2*pi/Ne;
 phi= 0:inc:2*pi;
+sigmaScale = 2;
 
 % get covariances
 for i = itp
@@ -28,7 +29,7 @@ for i = itp
         Sigma(:,d) = b(d*stDim+1:(d+1)*stDim, i);
     end
         
-    ptemp = make_ellipse(x(1:2,i),Sigma(1:2,1:2),3, phi);
+    ptemp = make_ellipse(x(1:2,i),Sigma(1:2,1:2), sigmaScale, phi);
     pointsToPlot = [pointsToPlot ptemp];
 end      
             

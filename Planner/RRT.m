@@ -18,7 +18,7 @@ classdef RRT < PlannerBase
     properties
         map = []; % state dimension
         stateValidityChecker = [];  % state validity checker
-        goalNeighborhood = 1e-2; % neighborhood of goal
+        goalNeighborhood = 1e-1; % neighborhood of goal
         motionModel = [];
         EPS = 0.5;
     end
@@ -85,7 +85,7 @@ classdef RRT < PlannerBase
                 [val, idx] = min(ndist);
                 q_near = nodes(idx);
                 
-                q_new.coord = steer(q_rand, q_near.coord, val, obj.EPS);
+                q_new.coord = obj.steer(q_rand, q_near.coord, val, obj.EPS);
                 if obj.isPathValid(q_rand',q_near.coord')
                     line([q_near.coord(1), q_new.coord(1)], [q_near.coord(2), q_new.coord(2)], 'Color', 'k', 'LineWidth', 2);
                     drawnow
