@@ -57,7 +57,7 @@ for d = 1:stDim
     P(:,d) = b(d*stDim+1:(d+1)*stDim, 1);
 end
 
-Q_t = eye(stDim); % penalize uncertainty
+Q_t = 4*eye(stDim); % penalize uncertainty
 R_t = eye(ctrlDim); % penalize control effort
 Q_l = 10*L*eye(stDim); % penalize terminal error
 w_cc = 1.0; % penalize collision

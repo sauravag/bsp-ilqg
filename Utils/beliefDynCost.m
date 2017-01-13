@@ -64,7 +64,7 @@ else
     %% First derivative of sigmaToCollide (jacobian of sigma[b])
     tStart = tic;
     xu_sigma =  @(x) sigmaToCollide(x, motionModel.stDim, collisionChecker);
-    dsigma_db  = squeeze(finiteDifference(xu_sigma, b,1e-2)); % need to have a large step size to see derivative in collision
+    dsigma_db  = squeeze(finiteDifference(xu_sigma, b,1e-1)); % need to have a large step size to see derivative in collision
     dsigma_db = [dsigma_db;zeros(motionModel.ctDim,size(dsigma_db,2))]; % jacobian w.r.t u is zero for collision
     
     nSigma = sigmaToCollide(b, motionModel.stDim, collisionChecker);
