@@ -54,9 +54,9 @@ for d = 1:stDim
 end
 
 Q_t = 10*eye(stDim); % penalize uncertainty
-R_t = eye(ctrlDim); % penalize control effort
+R_t = 0.1*eye(ctrlDim); % penalize control effort
 Q_l = 10*L*eye(stDim); % penalize terminal error
-w_cc = 10;
+w_cc = 1;
 
 % deviation from goal
 delta_x = goal-x;
@@ -86,7 +86,7 @@ else
   
   uc = u'*R_t*u;
   
-  cc = w_cc*collisionCost(x,P,stateValidityChecker); % takes about 0.0035 s
+%   cc = w_cc*collisionCost(x,P,stateValidityChecker); % takes about 0.0035 s
   
 end
 
@@ -121,7 +121,7 @@ R_orig =  ROBOT_RADIUS; % save robot radius
 
 % number of standard deviations at which robot collides
 % at s = 0, f goes to infinite so not good -> better to use small value of 0.01
-for s = 0.1:0.2:3
+for s = 0.1:0.2:2
     % inflate robot radius 
     ROBOT_RADIUS = R_orig + s*d;
     

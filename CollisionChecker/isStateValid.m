@@ -14,7 +14,7 @@ function yesno = isStateValid(x, map)
 global ROBOT_RADIUS;
 R = ROBOT_RADIUS;
 
-N = 16; % discretize robot body
+N = 30; % discretize robot body
 delta_theta = 2*pi/N;
 theta = 0:delta_theta:2*pi-delta_theta;
 
