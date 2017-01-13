@@ -18,7 +18,7 @@ pointsToPlot = [x(1,:) NaN;x(2,:) NaN];
 Ne = 50;% number of points in ellipse drawing
 inc= 2*pi/Ne;
 phi= 0:inc:2*pi;
-sigmaScale = 2;
+sigmaScale = 3;
 
 % get covariances
 for i = itp
