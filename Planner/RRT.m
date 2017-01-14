@@ -1,6 +1,6 @@
 % RRT algorithm in 2D with collision avoidance.
 %
-% Author: Sai Vemprala
+% Thanks to Sai Vemprala for original implementation.
 %
 % nodes:    Contains list of all explored nodes. Each node contains its
 %           coordinates, cost to reach and its parent.
@@ -14,7 +14,7 @@
 % 4. Add q_new to node list.
 % 5. Continue until maximum number of nodes is reached or goal is hit.
 classdef RRT < PlannerBase
-    
+
     properties
         map = []; % state dimension
         stateValidityChecker = [];  % state validity checker
@@ -156,8 +156,6 @@ classdef RRT < PlannerBase
         end
         
     end
-    
-    
 end
 
 

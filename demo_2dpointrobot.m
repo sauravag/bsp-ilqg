@@ -1,14 +1,9 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Belief Space Planning with iLQG
-% Copyright 2017
-% Author: Saurav Agarwal
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Demo for a 2D belief space planning scenario with a 
+% point robot whose body is modeled as a disk 
+% and it can sense beacons in the world.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function demo_2dpointrobot
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Demo for a 2D planning scenario with a point 
-% robot and range sensing to beacons.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % add subfolders to path
 addpath(genpath('./'));
@@ -35,7 +30,8 @@ ROBOT_RADIUS = 0.46; % robot radius is needed by collision checker
 
 svc = @(x)isStateValid(x,map); % state validity checker (collision)
 
-% Setup start and goal/target state
+%% Setup start and goal/target state
+
 x0 = map.start; % intial state
 P = 0.4^2*eye(2); % intial covariance
 % sqrtSigma0 = sqrtm(Sigma0);
@@ -43,19 +39,21 @@ b0 = [x0;P(:)]; % initial belief state
 
 xf = map.goal; % target state
 
+%% Setup planner to get nominal controls
 planner = RRT(map,mm,svc);
 
 [~,u0] = planner.plan(x0,xf);
 
 nDT = size(u0,2); % Time steps
-% u0 = repmat((xf-x0)/T,1,T/dt);%  2-piece straight line guess for initial controls
+
+%% set up the optimization problem
 
 % Set full_DDP=true to compute 2nd order derivatives of the
 % dynamics. This will make iterations more expensive, but
 % final convergence will be much faster (quadratic)
 full_DDP = false;
 
-% set up the optimization problem
+% this function is needed by iLQG
 DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svc);
 
 % control constraints are optional
@@ -64,7 +62,7 @@ DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svc);
 
 Op.plot = -1; % plot the derivatives as well
 
-% prepare the visualization window and graphics callback
+%% prepare the visualization window and graphics callback
 figh = figure;
 drawLandmarks(figh,map.landmarks);
 drawObstacles(figh,map.obstacles);
@@ -76,17 +74,18 @@ set(gca,'xlim',map.bounds(1,[1,2]),'ylim',map.bounds(2,[1,3]),'DataAspectRatio',
 xlabel('X (m)'); ylabel('Y (m)');
 box on
 
-% prepare and install trajectory visualization callback
+%% prepare and install trajectory visualization callback
 line_handle = line([0 0],[0 0],'color','r','linewidth',2);
 plotFn = @(x) set(line_handle,'Xdata',x(1,:),'Ydata',x(2,:));
 Op.plotFn = plotFn;
 
-% === run the optimization
+%% === run the optimization
 [b,u_opt,L_opt]= iLQG(DYNCST, b0, u0, Op);
 
+%% Save result figure
 saveas(figh,'iLQG-solution.jpg');
 
-% plot the final trajectory and covariances
+%% plot the final trajectory and covariances
 if animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svc)
     warning('Robot collided during exeuction')
 end
