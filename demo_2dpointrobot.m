@@ -84,6 +84,8 @@ Op.plotFn = plotFn;
 % === run the optimization
 [b,u_opt,L_opt]= iLQG(DYNCST, b0, u0, Op);
 
+saveas(figh,'iLQG-solution.jpg');
+
 % plot the final trajectory and covariances
 if animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svc)
     warning('Robot collided during exeuction')

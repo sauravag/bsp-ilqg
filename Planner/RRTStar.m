@@ -41,7 +41,7 @@ classdef RRTStar < PlannerBase
             y_max = obj.map.bounds(2,3);
             
             numNodes = 500;
-            goalBias = 0.05;
+            goalBias = 0.1;
             
             q_start.coord = x0';
             q_start.cost = 0;
