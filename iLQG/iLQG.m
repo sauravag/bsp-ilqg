@@ -28,7 +28,7 @@
 % POSSIBILITY OF SUCH DAMAGE.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [x, u, L, Vx, Vxx, cost, trace, stop] = iLQG(DYNCST, x0, u0, Op)
+function [x, u, L, Vx, Vxx, cost, trace, stop, totaTime] = iLQG(DYNCST, x0, u0, Op)
 
 % iLQG - solve the deterministic finite-horizon optimal control problem.
 %
@@ -428,6 +428,7 @@ if ~isempty(iter)
             iter,sum(cost(:)),g_norm,lambda,1e3*total_t/iter,total_t,...
             [diff_t, back_t, fwd_t, (total_t-diff_t-back_t-fwd_t)]*100/total_t);
     end
+    totaTime = total_t;
     trace    = trace(~isnan([trace.iter]));
 %     timing   = [diff_t back_t fwd_t total_t-diff_t-back_t-fwd_t];
     graphics(Op.plot,x,u,cost,L,Vx,Vxx,fx,fxx,fu,fuu,trace,2); % draw legend
@@ -623,7 +624,7 @@ if figures ~= 0  && ( mod(mT,figures) == 0 || init == 2 )
     set(ax1,'XAxisL','top','YAxisL','right','xlim',[1 N],'xtick',[])
     line(1:N,cost,'linewidth',4,'color',.5*[1 1 1]);
     ax2 = axes('Position',get(ax1,'Position'));
-    plot((1:N),x','linewidth',2);
+%     plot((1:N),x','linewidth',2);
     set(ax2,'xlim',[1 N],'Ygrid','on','YMinorGrid','off','color','none');
     set(ax1,'Position',get(ax2,'Position'));
     double_title(ax1,ax2,'state','running cost')
@@ -632,12 +633,12 @@ if figures ~= 0  && ( mod(mT,figures) == 0 || init == 2 )
     CO = get(axL,'colororder');
     set(axL,'nextplot','replacechildren','colororder',CO(1:min(n,7),:))
     Lp = reshape(permute(L,[2 1 3]), [nL*m N-1])';
-    plot(axL,1:N-1,Lp,'linewidth',1,'color',0.7*[1 1 1]);
+%     plot(axL,1:N-1,Lp,'linewidth',1,'color',0.7*[1 1 1]);
     ylim  = get(axL,'Ylim');
     ylim  = [-1 1]*max(abs(ylim));
     set(axL,'XAxisL','top','YAxisL','right','xlim',[1 N],'xtick',[],'ylim',ylim)
     axu = axes('Position',get(axL,'Position'));
-    plot(axu,(1:N-1),u(:,1:N-1)','linewidth',2);
+%     plot(axu,(1:N-1),u(:,1:N-1)','linewidth',2);
     ylim  = get(axu,'Ylim');
     ylim  = [-1 1]*max(abs(ylim));
     set(axu,'xlim',[1 N],'Ygrid','on','YMinorGrid','off','color','none','ylim',ylim);
@@ -656,7 +657,7 @@ if figures ~= 0  && ( mod(mT,figures) == 0 || init == 2 )
     double_title(ax1,ax2,'convergence trace','total cost')
     
     subplot(2,2,4);
-    plot(T,[trace(T).reduc_ratio]','.-','linewidth',2);
+%     plot(T,[trace(T).reduc_ratio]','.-','linewidth',2);
     title 'actual/expected reduction ratio'
     set(gca,'xlim',[0 mT+1],'ylim',[0 2],'Ygrid','on');
     xlabel 'iterations'
@@ -681,7 +682,7 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
     clf(fig2);
     
     subplot(2,3,1);
-    plot(1:N,Vx','linewidth',2);
+%     plot(1:N,Vx','linewidth',2);
     set(gca,'xlim',[1 N]);
     title 'V_x'
     grid on;
@@ -689,9 +690,9 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
     subplot(2,3,4);
     z = reshape(Vxx,nL^2,N)';
     zd = (1:nL+1:nL^2);
-    plot(1:N,z(:,setdiff(1:nL^2,zd)),'color',.5*[1 1 1]);
+%     plot(1:N,z(:,setdiff(1:nL^2,zd)),'color',.5*[1 1 1]);
     hold on;
-    plot(1:N,z(:,zd),'linewidth',2);
+%     plot(1:N,z(:,zd),'linewidth',2);
     hold off
     grid on;
     set(gca,'xlim',[1 N]);
@@ -702,9 +703,9 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
     Nfx     = size(fx,3);
     z = reshape(fx,nL^2,Nfx)';
     zd = (1:n+1:n^2);
-    plot(1:Nfx,z(:,setdiff(1:n^2,zd)),'color',.5*[1 1 1]);
+%     plot(1:Nfx,z(:,setdiff(1:n^2,zd)),'color',.5*[1 1 1]);
     hold on;
-    plot(1:Nfx,z,'linewidth',2);
+%     plot(1:Nfx,z,'linewidth',2);
     set(gca,'xlim',[1 Nfx+eps]);
     hold off
     grid on;
@@ -714,7 +715,7 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
         fxx = fxx(:,:,:,1:N-1);
         subplot(2,3,5);
         z  = reshape(fxx,[numel(fxx)/(N-1) N-1])';
-        plot(1:N-1,z);
+%         plot(1:N-1,z);
         title 'f_{xx}'
         grid on;
         set(gca,'xlim',[1 N-1+eps]);
@@ -723,7 +724,7 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
     subplot(2,3,3);
     Nfu     = size(fu,3);
     z = reshape(fu,nL*m,Nfu)';
-    plot(1:Nfu,z','linewidth',2);
+%     plot(1:Nfu,z','linewidth',2);
     set(gca,'xlim',[1 Nfu]);
     title 'f_u'
     grid on;
@@ -732,7 +733,7 @@ if figures < 0  &&  (mod(abs(trace(mT).iter)-1,figures) == 0 || init == 2) && ~i
         subplot(2,3,6);
         fuu = fuu(:,:,:,1:N-1);
         z  = reshape(fuu,[numel(fuu)/(N-1) N-1])';
-        plot(1:N-1,z);
+%         plot(1:N-1,z);
         title 'f_{uu}'
         grid on;
         set(gca,'xlim',[1 N-1+eps]);

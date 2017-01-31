@@ -35,7 +35,7 @@ classdef RRT < PlannerBase
             
         end
         
-        function [solutionPath,u] = plan(obj,x0,xf) % discrete motion model equation
+        function [solutionPath,u, figh] = plan(obj,x0,xf) % discrete motion model equation
                         
             x_max = obj.map.bounds(1,2);
             y_max = obj.map.bounds(2,3);

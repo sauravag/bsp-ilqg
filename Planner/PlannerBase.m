@@ -7,7 +7,7 @@ classdef PlannerBase < handle
     
     
     methods (Abstract)
-        [x,u] = plan(x0,xf) % Generates a
+        [x,u,figh] = plan(x0,xf) % Generates a
     end
     
     methods

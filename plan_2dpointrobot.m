@@ -3,23 +3,15 @@
 % point robot whose body is modeled as a disk 
 % and it can sense beacons in the world.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function demo_2dpointrobot
+function didCollide = plan_2dpointrobot(mapPath, outDatPath)
 
-% add subfolders to path
-addpath(genpath('./'));
-
-clear variables
-clc;
 close all;
-dbstop if error;
-
-fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
 %% Initialize planning scenario
 
 dt = 0.05; % time step
 
-load('Maps/mapB.mat'); % load map
+load(mapPath); % load map
 
 mm = TwoDPointRobot(dt); % motion model
 
@@ -32,7 +24,7 @@ svc = @(x)isStateValid(x,map); % state validity checker (collision)
 
 %% Setup start and goal/target state
 
-x0 = map.start; % intial state
+x0 = map.start - [6;0]; % intial state
 P = 0.4^2*eye(2); % intial covariance
 % sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;P(:)]; % initial belief state
@@ -42,7 +34,7 @@ xf = map.goal; % target state
 %% Setup planner to get nominal controls
 planner = RRT(map,mm,svc);
 
-[~,u0] = planner.plan(x0,xf);
+[~,u0, initGuessFigure] = planner.plan(x0,xf);
 
 nDT = size(u0,2); % Time steps
 
@@ -80,15 +72,29 @@ plotFn = @(x) set(line_handle,'Xdata',x(1,:),'Ydata',x(2,:));
 Op.plotFn = plotFn;
 
 %% === run the optimization
-[b,u_opt,L_opt]= iLQG(DYNCST, b0, u0, Op);
+[b,u_opt,L_opt,~,~,optimCost,~,~,tt]= iLQG(DYNCST, b0, u0, Op);
 
 %% Save result figure
-saveas(figh,'iLQG-solution.jpg');
+savefig(figh,strcat(outDatPath,'iLQG-solution'));
+savefig(initGuessFigure,strcat(outDatPath,'RRT-initGuess'));
+
+results.cost = fliplr(cumsum(fliplr(optimCost)));
+results.b = b;
+results.u = u_opt;
+results.L = L_opt;
+results.time = tt;
+results.start = x0;
+results.goal = xf;
 
 %% plot the final trajectory and covariances
+
+didCollide = 0;
 if animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svc)
-    warning('Robot collided during exeuction')
+    didCollide = 1;
 end
+
+results.collision = didCollide;
+save(strcat(outDatPath,'ilqg_results.mat'), 'results');
 
 end
 
