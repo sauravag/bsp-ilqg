@@ -1,4 +1,4 @@
-function failed = animate(figh, plotFn, b0, b_nom, u_nom, L, motionModel, obsModel, stateValidityChecker)
+function [failed, b_f] = animate(figh, plotFn, b0, b_nom, u_nom, L, motionModel, obsModel, stateValidityChecker)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Animate the robot's motion from start to goal
 %
@@ -35,6 +35,11 @@ robotDisk = ROBOT_RADIUS*[cos(linspace(0,2*pi,50));...
 
 for i = 1:size(u_nom,2)
     
+    if stateValidityChecker(b_nom(1:2,min(i+10,size(b_nom,2)))) == 0
+        failed = 2;
+        return;
+    end 
+    
     b = [x(:);P(:)]; % current belief
                   
     u = u_nom(:,i) + L(:,:,i)*(b - b_nom(:,i));
@@ -64,6 +69,9 @@ for i = 1:size(u_nom,2)
     K = (P_prd*H')/S;
     P = (eye(stDim) - K*H)*P_prd;    
     x = x_prd + K*(z - z_prd);
+    
+    % final belief
+    b_f = [x;P(:)];
     
     % if robot is in collision
     if stateValidityChecker(x) == 0

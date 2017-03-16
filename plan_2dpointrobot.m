@@ -1,13 +1,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Demo for a 2D belief space planning scenario with a 
-% point robot whose body is modeled as a disk 
+% Demo for a 2D belief space planning scenario with a
+% point robot whose body is modeled as a disk
 % and it can sense beacons in the world.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function didCollide = plan_2dpointrobot(mapPath, outDatPath)
+function plan_2dpointrobot(mapPath, outDatPath)
 
 close all;
 
 %% Initialize planning scenario
+DYNAMIC_OBS = 1;
 
 dt = 0.05; % time step
 
@@ -20,11 +21,11 @@ om = TwoDBeaconModel(1:size(map.landmarks,2),map.landmarks); % observation model
 global ROBOT_RADIUS;
 ROBOT_RADIUS = 0.46; % robot radius is needed by collision checker
 
-svc = @(x)isStateValid(x,map); % state validity checker (collision)
+svc = @(x)isStateValid(x,map,0); % state validity checker (collision)
 
 %% Setup start and goal/target state
 
-x0 = map.start - [6;0]; % intial state
+x0 = map.start; % intial state
 P = 0.4^2*eye(2); % intial covariance
 % sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;P(:)]; % initial belief state
@@ -32,7 +33,8 @@ b0 = [x0;P(:)]; % initial belief state
 xf = map.goal; % target state
 
 %% Setup planner to get nominal controls
-planner = RRT(map,mm,svc);
+% planner = RRT(map,mm,svc);
+planner = StraightLine(map,mm,svc);
 
 [~,u0, initGuessFigure] = planner.plan(x0,xf);
 
@@ -75,8 +77,12 @@ Op.plotFn = plotFn;
 [b,u_opt,L_opt,~,~,optimCost,~,~,tt]= iLQG(DYNCST, b0, u0, Op);
 
 %% Save result figure
-savefig(figh,strcat(outDatPath,'iLQG-solution'));
-savefig(initGuessFigure,strcat(outDatPath,'RRT-initGuess'));
+try
+    savefig(figh,strcat(outDatPath,'iLQG-solution'));
+    savefig(initGuessFigure,strcat(outDatPath,'RRT-initGuess'));
+catch ME
+    warning('Could not save figs')
+end
 
 results.cost = fliplr(cumsum(fliplr(optimCost)));
 results.b = b;
@@ -87,14 +93,51 @@ results.start = x0;
 results.goal = xf;
 
 %% plot the final trajectory and covariances
-
-didCollide = 0;
-if animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svc)
-    didCollide = 1;
+if DYNAMIC_OBS == 1
+    drawObstacles(figh,map.dynamicObs);
 end
 
+svcDyn = @(x)isStateValid(x,map,DYNAMIC_OBS); % state validity checker (collision)
+
+[didCollide, b_f] = animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svcDyn);
+
 results.collision = didCollide;
-save(strcat(outDatPath,'ilqg_results.mat'), 'results');
+
+% if dynamic obstacle showed up
+if didCollide == 2
+    
+    try
+        savefig(figh,strcat(outDatPath,'iLQG-dynobs-collision-detected'));        
+    catch ME
+        warning('Could not save figs')
+    end
+    
+    x0 = b_f(1:2,1); % intial state
+    xf = map.goal; % target state
+    
+    planner = RRT(map,mm,svcDyn);
+    
+    [~,u0,~] = planner.plan(x0,xf);
+    
+    nDT = size(u0,2); % Time steps
+    
+    % this function is needed by iLQG
+    DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svcDyn);
+    
+    iLQG(DYNCST, b_f, u0, Op);
+    
+    try
+        savefig(figh,strcat(outDatPath,'iLQG-post-dynobs-solution'));        
+    catch ME
+        warning('Could not save figs')
+    end
+end
+
+try
+    save(strcat(outDatPath,'ilqg_results.mat'), 'results');
+catch ME
+    warning('Could not save results')
+end
 
 end
 

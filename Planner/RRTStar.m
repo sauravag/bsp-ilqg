@@ -18,7 +18,7 @@ classdef RRTStar < PlannerBase
     properties
         map = []; % state dimension
         stateValidityChecker = [];  % state validity checker
-        goalNeighborhood = 0.5; % neighborhood of goal
+        goalNeighborhood = 0.2; % neighborhood of goal
         motionModel = [];
         EPS = 0.5;
     end
@@ -41,7 +41,7 @@ classdef RRTStar < PlannerBase
             y_max = obj.map.bounds(2,3);
             
             numNodes = 500;
-            goalBias = 0.02;
+            goalBias = 0.05;
             
             q_start.coord = x0';
             q_start.cost = 0;

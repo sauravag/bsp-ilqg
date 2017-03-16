@@ -40,7 +40,7 @@ if isunix ==1
     baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/'];
     % Mac is unix so have to check here
     if ismac==1
-        baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/MovingStart/'];
+        baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/DynamicObstacle/'];
     end
 end
 

@@ -1,11 +1,11 @@
-function yesno = isStateValid(x, map)
+function yesno = isStateValid(x, map, dynamicObs)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check if robot is in collision with obstacles
 % Input:
 %   x: robot state
 %   map: obstacle map
 %   varargin: robot radius to override default
-%  
+%
 % Output:
 %   yesno: 1 if robot is not in collision (valid state)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,12 +25,12 @@ robot = ptPerimiter;
 % get points on lines joining center to perimeter point
 for i =1:N
     lpts_x = linspace(x(1),ptPerimiter(1,i),N/2);
-    lpts_y = linspace(x(2),ptPerimiter(2,i),N/2);    
+    lpts_y = linspace(x(2),ptPerimiter(2,i),N/2);
     robot = [robot [lpts_x;lpts_y]];
 end
-    
-    
-% % check if robot is within boundary
+
+
+% check if robot is within boundary
 % bounds_xv = map.bounds(1,:);
 % bounds_yv = map.bounds(2,:);
 % inbounds = inpolygon(robot(1,:),robot(2,:),bounds_xv,bounds_yv);
@@ -43,15 +43,30 @@ end
 
 for i=1:length(map.obstacles)
     obs = map.obstacles{i};
-%     ts = tic;
+    %     ts = tic;
     collided = inpolygon(robot(1,:),robot(2,:),obs(1,:),obs(2,:));
-%     fprintf('Time to CC: %f s \n', toc(ts))
+    %     fprintf('Time to CC: %f s \n', toc(ts))
     % if robot perimiter point inside polygon it collided
     if any(collided)
         yesno = 0;
         return;
     end
+    
+end
+
+if dynamicObs == 1
+    for i=1:length(map.dynamicObs)
+        obs = map.dynamicObs{i};
+        %     ts = tic;
+        collided = inpolygon(robot(1,:),robot(2,:),obs(1,:),obs(2,:));
+        %     fprintf('Time to CC: %f s \n', toc(ts))
+        % if robot perimiter point inside polygon it collided
+        if any(collided)
+            yesno = 0;
+            return;
+        end
         
+    end
 end
 
 yesno = 1;
