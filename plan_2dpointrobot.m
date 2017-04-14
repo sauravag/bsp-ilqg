@@ -8,7 +8,7 @@ function plan_2dpointrobot(mapPath, outDatPath)
 close all;
 
 %% Initialize planning scenario
-DYNAMIC_OBS = 1;
+DYNAMIC_OBS = 0;
 
 dt = 0.05; % time step
 
@@ -26,15 +26,15 @@ svc = @(x)isStateValid(x,map,0); % state validity checker (collision)
 %% Setup start and goal/target state
 
 x0 = map.start; % intial state
-P = 0.4^2*eye(2); % intial covariance
+P = 0.1*eye(2); % intial covariance
 % sqrtSigma0 = sqrtm(Sigma0);
 b0 = [x0;P(:)]; % initial belief state
 
 xf = map.goal; % target state
 
 %% Setup planner to get nominal controls
-% planner = RRT(map,mm,svc);
-planner = StraightLine(map,mm,svc);
+planner = RRT(map,mm,svc);
+% planner = StraightLine(map,mm,svc);
 
 [~,u0, initGuessFigure] = planner.plan(x0,xf);
 
@@ -84,13 +84,13 @@ catch ME
     warning('Could not save figs')
 end
 
-results.cost = fliplr(cumsum(fliplr(optimCost)));
-results.b = b;
-results.u = u_opt;
-results.L = L_opt;
-results.time = tt;
-results.start = x0;
-results.goal = xf;
+results.cost{1} = fliplr(cumsum(fliplr(optimCost)));
+results.b{1} = b;
+results.u{1} = u_opt;
+results.L{1} = L_opt;
+results.time{1} = tt;
+results.start{1} = x0;
+results.goal{1} = xf;
 
 %% plot the final trajectory and covariances
 if DYNAMIC_OBS == 1
@@ -99,9 +99,9 @@ end
 
 svcDyn = @(x)isStateValid(x,map,DYNAMIC_OBS); % state validity checker (collision)
 
-[didCollide, b_f] = animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svcDyn);
+[didCollide, b_f, trCov_vs_time{1}] = animate(figh, plotFn, b0, b, u_opt, L_opt, mm, om, svcDyn, DYNAMIC_OBS);
 
-results.collision = didCollide;
+results.collision{1} = didCollide;
 
 % if dynamic obstacle showed up
 if didCollide == 2
@@ -124,13 +124,33 @@ if didCollide == 2
     % this function is needed by iLQG
     DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svcDyn);
     
-    iLQG(DYNCST, b_f, u0, Op);
+    [b,u_opt,L_opt,~,~,optimCost,~,~,tt] = iLQG(DYNCST, b_f, u0, Op);
     
     try
         savefig(figh,strcat(outDatPath,'iLQG-post-dynobs-solution'));        
     catch ME
         warning('Could not save figs')
     end
+    
+    [didCollide, ~, trCov_vs_time{2}] = animate(figh, plotFn, b_f, b, u_opt, L_opt, mm, om, svcDyn);
+    
+    results.cost{2} = fliplr(cumsum(fliplr(optimCost)));
+    results.b{2} = b;
+    results.u{2} = u_opt;
+    results.L{2} = L_opt;
+    results.time{2} = tt;
+    results.start{2} = x0;
+    results.goal{2} = xf;
+    results.collision{2} = didCollide;
+    results.trCov_vs_Time = cumsum([trCov_vs_time{1} trCov_vs_time{2}]);
+
+else
+    try
+        savefig(figh,strcat(outDatPath,'iLQG-A2B-soution'));
+    catch ME
+        warning('Could not save figs')
+    end
+
 end
 
 try

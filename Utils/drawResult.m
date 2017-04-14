@@ -44,14 +44,28 @@ function p= make_ellipse(x,P,s, phi)
 %
 % Input:
 %   x: mean
-%   P: sqrt of covariance
-%   s: scale (1-sigma, 2-sigma etc)
+%   P: covariance matrix
+%   s: confidence bound (1-sigma, 2-sigma etc)
 %   phi: angles from o to 2*pi
 %
 % Output:
 %   p: the points on perimiter of ellipse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-r = sqrtm(P);
-a= s*r*[cos(phi); sin(phi)];
+
+if s == 2 % 95% confidence
+    chi2 = 5.991;
+elseif s == 3 % 99% confidence
+    chi2 = 9.210;
+else
+    error('Unknown confidence bound for drawing error ellipse');
+end
+
+magnify = 1.0; % scale up drawing
+
+C = cholcov(P);
+
+a = C'*magnify*sqrt(chi2)*[cos(phi); sin(phi)];
+
 p=[a(1,:)+x(1) NaN;a(2,:)+x(2) NaN];
+
 end

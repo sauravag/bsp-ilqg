@@ -10,7 +10,7 @@ classdef TwoDPointRobot < MotionModelBase
         stDim = 2; % state dimension
         ctDim = 2;  % control vector dimension
         wDim = 2;   % Process noise (W) dimension
-        P_Wg = diag([0.028,0.028].^2); % covariance of state-additive-noise
+        P_Wg = diag([0.1,0.1].^2); % covariance of state-additive-noise
         sigma_b_u = [0.0;0.0]; % A constant bias intensity (std dev) of the control noise
         eta_u = [0;0]; % A coefficient, which makes the control noise intensity proportional to the control signal       
         zeroNoise = [0;0]; 
@@ -24,7 +24,20 @@ classdef TwoDPointRobot < MotionModelBase
             obj.dt = dt;
         end
         
-        function x_next = evolve(obj,x,u,w) % discrete motion model equation            
+        function x_next = evolve(obj,x,u,w) % discrete motion model equation  
+            
+            if u(1) < obj.ctrlLim(1,1)
+                u(1) = obj.ctrlLim(1,1);                
+            elseif u(1) > obj.ctrlLim(1,2)
+                u(1) = obj.ctrlLim(1,2);
+            end
+            
+            if u(2) < obj.ctrlLim(2,1)
+                u(2) = obj.ctrlLim(2,1);
+            elseif u(2) > obj.ctrlLim(2,2)
+                u(2) = obj.ctrlLim(2,2);
+            end
+                
             x_next = x + u*obj.dt + sqrt(obj.dt)*w;
         end
         

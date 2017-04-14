@@ -14,7 +14,7 @@ function yesno = isStateValid(x, map, dynamicObs)
 global ROBOT_RADIUS;
 R = ROBOT_RADIUS;
 
-N = 40; % discretize robot body
+N = 50; % discretize robot body
 delta_theta = 2*pi/N;
 theta = 0:delta_theta:2*pi-delta_theta;
 
@@ -30,7 +30,7 @@ for i =1:N
 end
 
 
-% check if robot is within boundary
+% % check if robot is within boundary
 % bounds_xv = map.bounds(1,:);
 % bounds_yv = map.bounds(2,:);
 % inbounds = inpolygon(robot(1,:),robot(2,:),bounds_xv,bounds_yv);

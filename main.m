@@ -16,10 +16,10 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 CREATE_OUTPUT_DIRECTORY = 1; % set to 1 for writing output
 
 % number of sims to run
-NUM_SIMS = 1;
+NUM_SIMS = 50;
 
 % which map to use
-fname = 'mapB';
+fname = 'mapTask1';
 
 % create full path to map name
 mapFilePath = strcat('./Maps/',fname,'.mat');
@@ -37,7 +37,7 @@ newFolderName = [fname,'_',...
 % accordingly base diretory where runs live
 if isunix ==1
     [~,username] = system('whoami');
-    baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/'];
+    baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/Task1-A2B/'];
     % Mac is unix so have to check here
     if ismac==1
         baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/DynamicObstacle/'];
