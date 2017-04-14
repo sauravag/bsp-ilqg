@@ -51,8 +51,8 @@ full_DDP = false;
 DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svc);
 
 % control constraints are optional
-% Op.lims  = [-2.0 2.0;         % Vx limits (m/s)
-%     -2.0  2.0];        % Vy limits (m/s)
+% Op.lims  = [-1.0 1.0;         % Vx limits (m/s)
+%     -1.0  1.0];        % Vy limits (m/s)
 
 Op.plot = -1; % plot the derivatives as well
 
