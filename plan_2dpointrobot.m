@@ -10,7 +10,7 @@ close all;
 %% Initialize planning scenario
 DYNAMIC_OBS = 0;
 
-dt = 0.05; % time step
+dt = 0.1; % time step
 
 load(mapPath); % load map
 
