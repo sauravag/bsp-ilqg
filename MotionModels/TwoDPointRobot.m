@@ -65,8 +65,10 @@ classdef TwoDPointRobot < MotionModelBase
             
             d = xf - x0; % displacement
             
-            maxVx = max(obj.ctrlLim(1,:)); % max speed at which robot can go
-            maxVy = max(obj.ctrlLim(2,:)); % max speed at which robot can go
+            % cannot drive at control limit because then there is no room
+            % for optimizer to add deltas to control input
+            maxVx = max(obj.ctrlLim(1,:))/2; % max speed at which robot can go
+            maxVy = max(obj.ctrlLim(2,:))/2; % max speed at which robot can go
             
             nDT = ceil(max(abs(d(1))/ (maxVx*obj.dt), abs(d(2))/ (maxVy*obj.dt)));% time steps required to go from x0 to xf
             
