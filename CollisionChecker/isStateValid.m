@@ -24,8 +24,8 @@ robot = ptPerimiter;
 
 % get points on lines joining center to perimeter point
 for i =1:N
-    lpts_x = linspace(x(1),ptPerimiter(1,i),N/2);
-    lpts_y = linspace(x(2),ptPerimiter(2,i),N/2);
+    lpts_x = linspace(x(1),ptPerimiter(1,i),N);
+    lpts_y = linspace(x(2),ptPerimiter(2,i),N);
     robot = [robot [lpts_x;lpts_y]];
 end
 
