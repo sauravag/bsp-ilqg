@@ -31,15 +31,15 @@ end
 
 
 % % check if robot is within boundary
-% bounds_xv = map.bounds(1,:);
-% bounds_yv = map.bounds(2,:);
-% inbounds = inpolygon(robot(1,:),robot(2,:),bounds_xv,bounds_yv);
-% 
-% % if robot not within bounds return false
-% if sum(inbounds) ~= size(robot,2)
-%     yesno = 0;
-%     return;
-% end
+bounds_xv = map.bounds(1,:);
+bounds_yv = map.bounds(2,:);
+inbounds = inpolygon(ptPerimiter(1,:),ptPerimiter(2,:),bounds_xv,bounds_yv);
+
+% if robot not within bounds return false
+if sum(inbounds) ~= size(ptPerimiter,2)
+    yesno = 0;
+    return;
+end
 
 for i=1:length(map.obstacles)
     obs = map.obstacles{i};

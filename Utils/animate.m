@@ -45,7 +45,7 @@ failed = 0;
 for i = 1:size(u_nom,2)
     
     if DYNAMIC_OBS == 1
-        if stateValidityChecker(b_nom(1:2,min(i+10,size(b_nom,2)))) == 0
+        if stateValidityChecker(b_nom(1:2,min(i+3,size(b_nom,2)))) == 0
             figure(figh);
             plot(roboTraj(1,:),roboTraj(2,:),'g', 'LineWidth',2);
             drawnow;

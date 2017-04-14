@@ -52,6 +52,7 @@ classdef RRT < PlannerBase
             nodes(1) = q_start;
             
             figh = figure;
+            set(figh,'WindowStyle','docked');
             axis([0 x_max 0 y_max])
             drawObstacles(figh,obj.map.obstacles);
             title('RRT');

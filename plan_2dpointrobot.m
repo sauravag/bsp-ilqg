@@ -8,7 +8,7 @@ function plan_2dpointrobot(mapPath, outDatPath)
 close all;
 
 %% Initialize planning scenario
-DYNAMIC_OBS = 0;
+DYNAMIC_OBS = 1;
 
 dt = 0.1; % time step
 
@@ -33,8 +33,8 @@ b0 = [x0;P(:)]; % initial belief state
 xf = map.goal; % target state
 
 %% Setup planner to get nominal controls
-planner = RRT(map,mm,svc);
-% planner = StraightLine(map,mm,svc);
+% planner = RRT(map,mm,svc);
+planner = StraightLine(map,mm,svc);
 
 [~,u0, initGuessFigure] = planner.plan(x0,xf);
 
@@ -51,13 +51,14 @@ full_DDP = false;
 DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svc);
 
 % control constraints are optional
-Op.lims  = [-2.0 2.0;         % Vx limits (m/s)
-    -2.0  2.0];        % Vy limits (m/s)
+% Op.lims  = [-2.0 2.0;         % Vx limits (m/s)
+%     -2.0  2.0];        % Vy limits (m/s)
 
 Op.plot = -1; % plot the derivatives as well
 
 %% prepare the visualization window and graphics callback
 figh = figure;
+set(figh,'WindowStyle','docked');
 drawLandmarks(figh,map.landmarks);
 drawObstacles(figh,map.obstacles);
 scatter(x0(1),x0(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[1.0 0.0 0.0])
@@ -132,7 +133,7 @@ if didCollide == 2
         warning('Could not save figs')
     end
     
-    [didCollide, ~, trCov_vs_time{2}] = animate(figh, plotFn, b_f, b, u_opt, L_opt, mm, om, svcDyn);
+    [didCollide, ~, trCov_vs_time{2}] = animate(figh, plotFn, b_f, b, u_opt, L_opt, mm, om, svcDyn, DYNAMIC_OBS);
     
     results.cost{2} = fliplr(cumsum(fliplr(optimCost)));
     results.b{2} = b;
