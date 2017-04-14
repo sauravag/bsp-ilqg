@@ -10,11 +10,11 @@ classdef TwoDPointRobot < MotionModelBase
         stDim = 2; % state dimension
         ctDim = 2;  % control vector dimension
         wDim = 2;   % Process noise (W) dimension
-        P_Wg = diag([0.05,0.05].^2); % covariance of state-additive-noise
+        P_Wg = diag([0.2,0.2].^2); % covariance of state-additive-noise
         sigma_b_u = [0.0;0.0]; % A constant bias intensity (std dev) of the control noise
         eta_u = [0;0]; % A coefficient, which makes the control noise intensity proportional to the control signal       
         zeroNoise = [0;0]; 
-        ctrlLim = [-1.0 1.0;-1.0 1.0]; % max control for Vx and Vy
+        ctrlLim = [-2.0 2.0;-2.0 2.0]; % max control for Vx and Vy
     end
     
     methods

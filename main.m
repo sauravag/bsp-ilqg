@@ -16,7 +16,7 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 CREATE_OUTPUT_DIRECTORY = 1; % set to 1 for writing output
 
 % number of sims to run
-NUM_SIMS = 30;
+NUM_SIMS = 25;
 
 % which map to use
 fname = 'mapTask1';
