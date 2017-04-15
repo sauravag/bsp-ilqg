@@ -8,7 +8,7 @@ function plan_2dpointrobot(mapPath, outDatPath)
 close all;
 
 %% Initialize planning scenario
-DYNAMIC_OBS = 1;
+DYNAMIC_OBS = 0;
 
 dt = 0.1; % time step
 
