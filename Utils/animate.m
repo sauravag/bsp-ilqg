@@ -47,8 +47,9 @@ for i = 1:size(u_nom,2)
     if DYNAMIC_OBS == 1
         if stateValidityChecker(b_nom(1:2,min(i+3,size(b_nom,2)))) == 0
             figure(figh);
-            plot(roboTraj(1,:),roboTraj(2,:),'g', 'LineWidth',2);
+            plot(roboTraj(1,:),roboTraj(2,:),'g', 'LineWidth',2);          
             drawnow;
+            warning('Robot expected to Collide with dynamic obstacle!!!');
             failed = 2;
             return;
         end
@@ -96,6 +97,7 @@ for i = 1:size(u_nom,2)
         figure(figh);
         plot(roboTraj(1,:),roboTraj(2,:),'g', 'LineWidth',2);
         drawnow;
+        warning('Robot collided :( ');
         failed = 1;
         return;
     end

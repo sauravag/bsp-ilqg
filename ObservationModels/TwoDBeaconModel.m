@@ -14,7 +14,7 @@ classdef TwoDBeaconModel < ObservationModelBase
     end
     
     properties
-        sigma_b = 0.1; 
+        sigma_b = 0.005; 
     end
     
     methods

@@ -33,8 +33,8 @@ b0 = [x0;P(:)]; % initial belief state
 xf = map.goal; % target state
 
 %% Setup planner to get nominal controls
-% planner = RRT(map,mm,svc);
-planner = StraightLine(map,mm,svc);
+planner = RRT(map,mm,svc);
+% planner = StraightLine(map,mm,svc);
 
 [~,u0, initGuessFigure] = planner.plan(x0,xf);
 
@@ -51,8 +51,8 @@ full_DDP = false;
 DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svc);
 
 % control constraints are optional
-% Op.lims  = [-2.0 2.0;         % Vx limits (m/s)
-%     -2.0  2.0];        % Vy limits (m/s)
+Op.lims  = [-1.0 1.0;         % Vx limits (m/s)
+    -1.0  1.0];        % Vy limits (m/s)
 
 Op.plot = -1; % plot the derivatives as well
 
@@ -85,6 +85,8 @@ catch ME
     warning('Could not save figs')
 end
 
+results.mmNoiseSigma = sqrt(diag(mm.P_Wg));
+results.omNoiseSigma = om.sigma_b;
 results.cost{1} = fliplr(cumsum(fliplr(optimCost)));
 results.b{1} = b;
 results.u{1} = u_opt;

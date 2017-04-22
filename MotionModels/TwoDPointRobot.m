@@ -10,11 +10,11 @@ classdef TwoDPointRobot < MotionModelBase
         stDim = 2; % state dimension
         ctDim = 2;  % control vector dimension
         wDim = 2;   % Process noise (W) dimension
-        P_Wg = diag([0.15,0.15].^2); % covariance of state-additive-noise
+        P_Wg = diag([0.07,0.07].^2); % covariance of state-additive-noise
         sigma_b_u = [0.0;0.0]; % A constant bias intensity (std dev) of the control noise
         eta_u = [0;0]; % A coefficient, which makes the control noise intensity proportional to the control signal       
         zeroNoise = [0;0]; 
-        ctrlLim = [-4.0 4.0;-4.0 4.0]; % max control for Vx and Vy
+        ctrlLim = [-1.0 1.0;-1.0 1.0]; % max control for Vx and Vy
     end
     
     methods
@@ -67,8 +67,8 @@ classdef TwoDPointRobot < MotionModelBase
             
             % cannot drive at control limit because then there is no room
             % for optimizer to add deltas to control input
-            maxVx = max(obj.ctrlLim(1,:))/4; % max speed at which robot can go
-            maxVy = max(obj.ctrlLim(2,:))/4; % max speed at which robot can go
+            maxVx = 0.5*max(obj.ctrlLim(1,:)); % max speed at which robot can go
+            maxVy = 0.5*max(obj.ctrlLim(2,:)); % max speed at which robot can go
             
             nDT = ceil(max(abs(d(1))/ (maxVx*obj.dt), abs(d(2))/ (maxVy*obj.dt)));% time steps required to go from x0 to xf
             
