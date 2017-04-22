@@ -40,7 +40,7 @@ classdef RRT < PlannerBase
             x_max = obj.map.bounds(1,2);
             y_max = obj.map.bounds(2,3);
             
-            numNodes = 1000;
+            numNodes = 2500;
             goalBias = 0.025;
             
             q_start.coord = x0';
@@ -54,7 +54,7 @@ classdef RRT < PlannerBase
             figh = figure;
             set(figh,'WindowStyle','docked');
             axis([0 x_max 0 y_max])
-            drawObstacles(figh,obj.map.obstacles);
+            drawObstacles(figh,obj.map);
             title('RRT');
             axis equal;
             xlabel('X (m)'); ylabel('Y (m)');

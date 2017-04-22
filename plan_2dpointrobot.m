@@ -60,7 +60,7 @@ Op.plot = -1; % plot the derivatives as well
 figh = figure;
 set(figh,'WindowStyle','docked');
 drawLandmarks(figh,map.landmarks);
-drawObstacles(figh,map.obstacles);
+drawObstacles(figh,map);
 scatter(x0(1),x0(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[1.0 0.0 0.0])
 scatter(xf(1),xf(2),250,'filled','MarkerFaceAlpha',1/2,'MarkerFaceColor',[0.0 1.0 0.0])
 set(gcf,'name','Belief Space Planning with iLQG','NumberT','off');

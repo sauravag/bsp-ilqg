@@ -1,4 +1,4 @@
-function drawObstacles(h,obstacles)
+function drawObstacles(h,map)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Draw obstacles in the world. 
 % Input:
@@ -9,9 +9,13 @@ function drawObstacles(h,obstacles)
 figure(h)
 hold on;
 
-for i = 1:length(obstacles)
-    obs = obstacles{i};
-    fill(obs(1,:),obs(2,:),'m');
+R = map.obstacleRadius;
+
+for i = 1:size(map.obstacles,2)
+    obs = map.obstacles(:,i);
+    lp = obs - [R;R];
+    pos = [lp' 2*R 2*R];
+    rectangle('Position',pos','Curvature',[1 1],'FaceColor','m');
 end
 
 end

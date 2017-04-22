@@ -53,7 +53,7 @@ classdef RRTStar < PlannerBase
             
             figh = figure;
             axis([0 x_max 0 y_max])
-            drawObstacles(figh,obj.map.obstacles);
+            drawObstacles(figh,obj.map);
             title('RRT');
             xlabel('X (m)'); ylabel('Y (m)');
             hold on
