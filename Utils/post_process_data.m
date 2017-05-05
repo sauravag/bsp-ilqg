@@ -2,7 +2,7 @@
 % Analyze run data
 %%%%%%%%%%%%%%%%%%%%%
 
-baseDirectory = '/home/saurav/MATLAB/TRO/Task1-A2B-Forest/mapTask1_2017_4_18_10_36/';
+baseDirectory = '/home/saurav/MATLAB/TRO/Task1-A2B-Forest/mapTask1_2017_4_30_10_28/';
 
 % Get list of files in base folder
 fileList = dir(baseDirectory);
