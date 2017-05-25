@@ -15,7 +15,7 @@ phi = linspace(0,2*pi,50);
 for l = 1:size(landmarks,2)
     
 %     scatter(landmarks(1,l),landmarks(2,l),2000*r,'filled', 'MarkerFaceAlpha',1/r^2,'MarkerFaceColor',[1.0 1.0 1.0]);
-    for r = 0:0.05:5        
+    for r = 0:0.05:3        
         plot(landmarks(1,l)+r*cos(phi),landmarks(2,l) + +r*sin(phi),...
             'LineWidth',2,...
             'Color',[1.0,1.0,1.0]./(1+r^2));           

@@ -28,7 +28,7 @@
 % POSSIBILITY OF SUCH DAMAGE.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [x, u, L, Vx, Vxx, cost, trace, stop, totaTime] = iLQG(DYNCST, x0, u0, Op)
+function [x, u, L, Vx, Vxx, cost, trace, stop, totaTime, totalIterations] = iLQG(DYNCST, x0, u0, Op)
 
 % iLQG - solve the deterministic finite-horizon optimal control problem.
 %
@@ -412,6 +412,7 @@ if ~isempty(iter)
     fwd_t = [trace(1:iter).time_forward];
     fwd_t = sum(fwd_t(~isnan(fwd_t)));
     total_t = toc(t_start);
+    totalIterations = iter;
     if verbosity > 0
         fprintf(['\n'...
             'iterations:   %-3d\n'...

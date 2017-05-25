@@ -4,11 +4,12 @@
 % and it can sense beacons in the world.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+function main(fname)
 % add subfolders to path
-addpath(genpath('./'));
+% addpath(genpath('./'));
 
 % clean up
-clear variables; clc; close all; dbstop if error;
+% clear variables; clc; close all; dbstop if error;
 
 fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 
@@ -16,10 +17,10 @@ fprintf('\n A demonstration of the iLQG algorithm for Belief Space Planning \n')
 CREATE_OUTPUT_DIRECTORY = 1; % set to 1 for writing output
 
 % number of sims to run
-NUM_SIMS = 100;
+NUM_SIMS = 1;
 
 % which map to use
-fname = 'mapTask1';
+% fname = 'mapTask3';
 
 % create full path to map name
 mapFilePath = strcat('./Maps/',fname,'.mat');
@@ -37,10 +38,10 @@ newFolderName = [fname,'_',...
 % accordingly base diretory where runs live
 if isunix ==1
     [~,username] = system('whoami');
-    baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/Task1-A2B-Forest/'];
+    baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/Task3-MoveAway/'];
     % Mac is unix so have to check here
     if ismac==1
-        baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/Task1-Forest/'];
+        baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/Task3-MoveAway/'];
     end
 end
 
@@ -65,4 +66,5 @@ for i = 1:NUM_SIMS
     end
     
     plan_2dpointrobot(mapFilePath, [outDatPath,'run',num2str(i),'/']);
+end
 end

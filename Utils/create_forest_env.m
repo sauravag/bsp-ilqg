@@ -1,21 +1,25 @@
 % Create a forest type map with circular obstacles
 clc; clear;
 
-fPath = '/Users/sauravagarwal/Desktop/Research/Development/bsp-ilqg/Maps/mapTask1.mat';
+fPath = '/home/saurav/Research/Development/bsp-ilqg/Maps/mapTask3.mat';
 
 load(fPath);
 
-obstacleRadius = 0.3; % radius of 1 obstacles
+obstacleRadius = 0.5; % radius of 1 obstacles
 
-spacing = 2.5; % distance between obstacle centers
+spacing = 5.0; % distance between obstacle centers
 
 map.obstacleRadius = obstacleRadius;
 
-map.bounds = [0 20 20 0 0;0 0 20 20 0];
+map.bounds = [0 200 200 0 0;0 0 200 200 0];
 
-map.goal = [17.0;17.75];
+map.goal = [103.5;103.5];
 
-map.landmarks = [1 17;18 1]; 
+map.start = [3.5;3.5];
+
+distance = norm(map.goal-map.start)
+
+map.landmarks = [1:10:190;1:10:190]; 
 
 x_oc =  min(map.bounds(1,:))+2*obstacleRadius:spacing: max(map.bounds(1,:))-2*obstacleRadius;
 y_oc =  min(map.bounds(2,:))+2*obstacleRadius:spacing: max(map.bounds(2,:))-2*obstacleRadius;
@@ -28,6 +32,8 @@ for x = x_oc
     end
 end
 
-save(fPath,'map');
+sPath = '/home/saurav/Research/Development/bsp-ilqg/Maps/mapTask3_long_2.mat';
+
+save(sPath,'map');
 
 fprintf('Done \n');

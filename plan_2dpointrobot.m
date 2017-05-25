@@ -75,7 +75,7 @@ plotFn = @(x) set(line_handle,'Xdata',x(1,:),'Ydata',x(2,:));
 Op.plotFn = plotFn;
 
 %% === run the optimization
-[b,u_opt,L_opt,~,~,optimCost,~,~,tt]= iLQG(DYNCST, b0, u0, Op);
+[b,u_opt,L_opt,~,~,optimCost,~,~,tt, nIter]= iLQG(DYNCST, b0, u0, Op);
 
 %% Save result figure
 try
@@ -92,6 +92,7 @@ results.b{1} = b;
 results.u{1} = u_opt;
 results.L{1} = L_opt;
 results.time{1} = tt;
+results.iter{1} = nIter;
 results.start{1} = x0;
 results.goal{1} = xf;
 
@@ -127,7 +128,7 @@ if didCollide == 2
     % this function is needed by iLQG
     DYNCST  = @(b,u,i) beliefDynCost(b,u,xf,nDT,full_DDP,mm,om,svcDyn);
     
-    [b,u_opt,L_opt,~,~,optimCost,~,~,tt] = iLQG(DYNCST, b_f, u0, Op);
+    [b,u_opt,L_opt,~,~,optimCost,~,~,tt, nIter] = iLQG(DYNCST, b_f, u0, Op);
     
     try
         savefig(figh,strcat(outDatPath,'iLQG-post-dynobs-solution'));        
@@ -142,6 +143,7 @@ if didCollide == 2
     results.u{2} = u_opt;
     results.L{2} = L_opt;
     results.time{2} = tt;
+    results.iter{2} = nIter;
     results.start{2} = x0;
     results.goal{2} = xf;
     results.collision{2} = didCollide;

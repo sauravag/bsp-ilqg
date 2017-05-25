@@ -20,7 +20,7 @@ classdef RRTStar < PlannerBase
         stateValidityChecker = [];  % state validity checker
         goalNeighborhood = 0.2; % neighborhood of goal
         motionModel = [];
-        EPS = 0.5;
+        EPS = 0.3;
     end
     
     
@@ -40,7 +40,7 @@ classdef RRTStar < PlannerBase
             x_max = obj.map.bounds(1,2);
             y_max = obj.map.bounds(2,3);
             
-            numNodes = 500;
+            numNodes = 5000;
             goalBias = 0.05;
             
             q_start.coord = x0';
@@ -160,7 +160,7 @@ classdef RRTStar < PlannerBase
             for i = 1:size(solutionPath,2)-1
                 u = [u obj.motionModel.generateOpenLoopControls(solutionPath(:,i),solutionPath(:,i+1))];
             end
-            
+                        
         end
         
         function yesno = isPathValid(obj,xt,xs)
