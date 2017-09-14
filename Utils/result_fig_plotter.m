@@ -1,5 +1,5 @@
 % Plot an iLQG solution and save as EPS file
-uiopen('/Users/sauravagarwal/Google Drive/2017_SLAP_Rollout_FIRM/DATA-Sims/September2017/iLQG Single Homotopy/run1/iLQG-solution.fig',1)
+uiopen('iLQG-solution.fig',1)
 
 if isunix ==1
     [~,username] = system('whoami');
@@ -10,8 +10,8 @@ if isunix ==1
     end
 end
 
-% path = load('/Users/sauravagarwal/Google Drive/2017_SLAP_Rollout_FIRM/DATA-Sims/September2017/Rollout Forest Single Homotopy/run2/RobotPath.csv');
-% cov = load('/Users/sauravagarwal/Google Drive/2017_SLAP_Rollout_FIRM/DATA-Sims/September2017/Rollout Forest Single Homotopy/run3/RobotCovarianceEllipse.csv');
+% path = load('RobotPath.csv');
+% cov = load('RobotCovarianceEllipse.csv');
 % 
 % rx = path(:,1);
 % ry = path(:,2);
