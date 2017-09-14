@@ -38,10 +38,10 @@ newFolderName = [fname,'_',...
 % accordingly base diretory where runs live
 if isunix ==1
     [~,username] = system('whoami');
-    baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/Task3-MoveAway/'];
+    baseDirectory = ['/home/',username(1:end-1),'/MATLAB/TRO/SingleHomotopy/'];
     % Mac is unix so have to check here
     if ismac==1
-        baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/Task3-MoveAway/'];
+        baseDirectory = ['/Users/',username(1:end-1),'/Documents/MATLAB/TRO/SingleHomotopy/'];
     end
 end
 

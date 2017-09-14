@@ -40,7 +40,7 @@ classdef RRT < PlannerBase
             x_max = obj.map.bounds(1,2);
             y_max = obj.map.bounds(2,3);
             
-            numNodes = 3000;
+            numNodes = 500;
             goalBias = 0.10;
             
             q_start.coord = x0';
